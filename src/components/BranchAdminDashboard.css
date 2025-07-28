@@ -1,0 +1,795 @@
+/* src/components/BranchAdminDashboard.css */
+
+.branch-admin-dashboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f8f8f8;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+/* 상단 헤더 바 (기존 대시보드 헤더와 동일하게 유지) */
+.dashboard-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 80px;
+  background-color: #2c3e50;
+  color: white;
+  height: 100px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+}
+
+.header-logo-img {
+  height: 50px;
+  width: auto;
+}
+
+.main-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 40px;
+}
+
+.main-nav li {
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.2s;
+  position: relative;
+  padding-bottom: 5px;
+}
+
+.main-nav li:hover {
+  color: #007bff;
+}
+
+.main-nav li.active {
+  color: #007bff;
+}
+
+.main-nav li.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #007bff;
+  border-radius: 2px;
+}
+
+.header-login-button {
+  background: none;
+  border: 2px solid white;
+  color: white;
+  padding: 15px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.header-login-button:hover {
+  background-color: white;
+  color: #2c3e50;
+  border-color: #2c3e50;
+}
+
+/* 메인 컨테이너 */
+.dashboard-main-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 50px;
+  max-width: 1800px; /* 1920px 화면에 맞춰 대폭 증가 */
+  margin: 0 auto;
+  width: 100%;
+}
+
+.dashboard-title {
+  font-size: 64px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 40px;
+  width: 100%;
+  text-align: left;
+}
+
+/* 전체 콘텐츠 레이아웃 (사이드바 + 메인) */
+.content-layout-grid {
+  display: grid;
+  grid-template-columns: 350px 1fr; /* 왼쪽 사이드바 고정 너비, 오른쪽 메인 콘텐츠 유동 너비 */
+  gap: 30px;
+  width: 100%;
+  min-height: 800px; /* 전체 페이지 최소 높이 */
+}
+
+/* 왼쪽 사이드바 섹션 */
+.sidebar-section {
+  background-color: #2c3e50; /* 어두운 배경색 */
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  padding: 30px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-search-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.sidebar-search-input {
+  flex-grow: 1;
+  padding: 12px 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  background-color: rgba(255, 255, 255, 0.1); /* 투명한 흰색 배경 */
+  color: white;
+}
+
+.sidebar-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.sidebar-search-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #007bff;
+}
+
+.sidebar-search-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.sidebar-search-button:hover {
+  background-color: #0056b3;
+}
+
+.sidebar-place-list { /* 클래스명 변경 */
+  flex-grow: 1;
+  background-color: rgba(0, 0, 0, 0.2); /* 목록 배경색 */
+  border-radius: 10px;
+  padding: 20px;
+  overflow-y: auto; /* 목록이 길어지면 스크롤 */
+}
+
+.sidebar-place-list .list-title { /* 클래스명 변경 */
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.sidebar-place-list ul { /* 클래스명 변경 */
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-place-list li { /* 클래스명 변경 */
+  font-size: 20px;
+  padding: 15px 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-place-list li:last-child { /* 클래스명 변경 */
+  border-bottom: none;
+}
+
+.sidebar-place-list li:hover { /* 클래스명 변경 */
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-place-list li.active { /* 클래스명 변경 */
+  background-color: #007bff; /* 활성 장소 배경색 */
+  font-weight: bold;
+}
+
+/* 메인 콘텐츠 영역 */
+.main-content-area {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content-grid-inner {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr; /* 왼쪽 사업장 정보/안전 점수, 오른쪽 보고서 */
+  grid-template-rows: auto auto; /* 행 높이 자동 */
+  gap: 30px;
+  flex-grow: 1;
+}
+
+.grid-item {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.item-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 25px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 제목과 아이콘 간격 */
+}
+
+.edit-icon {
+  font-size: 22px;
+  color: #007bff;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.edit-icon:hover {
+  color: #0056b3;
+}
+
+/* 사업장 정보 섹션 */
+.business-info-section {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 15px;
+  font-size: 20px;
+  color: #555;
+}
+
+.info-label {
+  font-weight: bold;
+  min-width: 120px; /* 라벨 너비 고정 */
+  color: #333;
+}
+
+.info-value {
+  flex-grow: 1;
+}
+
+.info-row.special-notes {
+  margin-top: 25px;
+  border-top: 1px dashed #eee;
+  padding-top: 25px;
+}
+
+/* 안전 점수 및 파일 업로드 섹션 */
+.safety-score-section {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+}
+
+.score-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.score-circle-large {
+  width: 250px; /* 원 크기 증가 */
+  height: 250px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 80px; /* 점수 폰트 크기 */
+  font-weight: bold;
+  color: #333;
+  position: relative;
+  overflow: hidden;
+  /* conic-gradient를 사용하여 이미지처럼 색상 분포 표현 */
+  /* 이 값은 JS에서 동적으로 변경됩니다. */
+  /* 예시: background: conic-gradient(#ffc107 234deg, #f0f0f0 234deg 360deg); */
+}
+
+.score-circle-large .score-value-large {
+  z-index: 1;
+}
+
+.score-status-label {
+  font-size: 32px; /* 상태 라벨 폰트 크기 */
+  font-weight: bold;
+  color: #ffc107; /* 주의 색상 (예시) */
+  margin-top: 15px;
+}
+
+.score-description {
+  font-size: 20px;
+  color: #777;
+  text-align: center;
+  line-height: 1.5;
+  margin-top: 15px;
+}
+
+.score-description .highlight-score {
+  font-weight: bold;
+  color: #333;
+}
+
+.file-upload-title {
+  margin-top: 40px;
+}
+
+.file-upload-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  border: 2px dashed #ddd; /* 점선 테두리 */
+  border-radius: 10px;
+  padding: 30px;
+  width: 100%;
+}
+
+.file-upload-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 15px 30px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-upload-button:hover {
+  background-color: #0056b3;
+}
+
+.uploaded-files-list {
+  width: 100%;
+  text-align: left;
+  margin-top: 10px;
+}
+
+.uploaded-file-item {
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.uploaded-file-item .upload-check-icon {
+  color: #28a745;
+  font-size: 20px;
+}
+
+/* 분석 보고서 및 감점 사유 섹션 */
+.analysis-report-section {
+  grid-column: 2 / 3;
+  grid-row: 1 / 3; /* 두 행 모두 차지 */
+}
+
+.report-dropdown-group {
+  position: relative;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.report-dropdown {
+  width: 100%;
+  padding: 15px 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 20px;
+  appearance: none; /* 기본 드롭다운 화살표 숨기기 */
+  background-color: white;
+  cursor: pointer;
+  padding-right: 40px; /* 커스텀 화살표 공간 확보 */
+}
+
+.report-dropdown:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.dropdown-arrow-icon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #777;
+  font-size: 20px;
+  pointer-events: none; /* 아이콘 클릭 방지 */
+}
+
+.deduction-title {
+  margin-top: 40px; /* 분석 보고서와 감점 사유 섹션 간 간격 */
+}
+
+/* 감점 사유 로그 박스 스타일 */
+.deduction-log-box {
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  padding: 20px; /* 내부 패딩 */
+  border-radius: 10px;
+  max-height: 250px; /* 스크롤을 위한 최대 높이 */
+  overflow-y: auto; /* 내용이 길어지면 스크롤바 생성 */
+  margin-bottom: 25px; /* 로그 박스와 다운로드 버튼 사이 간격 */
+  font-size: 18px; /* 내용 폰트 크기 */
+  line-height: 1.6; /* 줄 간격 */
+  color: #555;
+}
+
+.deduction-log-box ul {
+  list-style: none; /* 기본 리스트 스타일 제거 */
+  padding: 0;
+  margin: 0;
+}
+
+.deduction-log-box li {
+  margin-bottom: 10px; /* 각 로그 항목 사이 간격 */
+  padding-bottom: 5px;
+  border-bottom: 1px dashed #eee; /* 점선 구분선 */
+}
+
+.deduction-log-box li:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.deduction-log-box .log-date {
+  font-weight: bold;
+  color: #777;
+  margin-right: 10px;
+}
+
+.deduction-log-box .no-log-message {
+  text-align: center;
+  color: #999;
+  padding: 20px;
+}
+
+
+.download-report-button {
+  width: 100%;
+  padding: 20px 30px;
+  background-color: #2c3e50; /* 어두운 파란색 */
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-top: auto; /* 하단에 붙도록 */
+}
+
+.download-report-button:hover {
+  background-color: #1a242f;
+}
+
+
+/* 반응형 디자인 */
+@media (max-width: 1200px) { /* 태블릿 가로 모드 및 작은 데스크톱 */
+  .dashboard-header-bar {
+    padding: 20px 40px;
+    height: 80px;
+  }
+  .header-logo-img {
+    height: 40px;
+  }
+  .main-nav ul {
+    gap: 25px;
+  }
+  .main-nav li {
+    font-size: 18px;
+  }
+  .header-login-button {
+    padding: 12px 25px;
+    font-size: 18px;
+  }
+
+  .dashboard-main-container {
+    padding: 40px 30px;
+    max-width: 95%;
+  }
+  .dashboard-title {
+    font-size: 52px;
+    margin-bottom: 30px;
+  }
+
+  .content-layout-grid {
+    grid-template-columns: 1fr; /* 작은 화면에서는 한 컬럼으로 변경 */
+    gap: 25px;
+  }
+  .sidebar-section {
+    padding: 25px;
+    min-height: unset;
+  }
+  .sidebar-search-box {
+    margin-bottom: 20px;
+  }
+  .sidebar-search-input,
+  .sidebar-search-button {
+    font-size: 16px;
+    padding: 10px 15px;
+  }
+  .sidebar-place-list .list-title { /* 클래스명 변경 */
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+  .sidebar-place-list li { /* 클래스명 변경 */
+    font-size: 18px;
+    padding: 12px 8px;
+  }
+
+  .main-content-grid-inner {
+    grid-template-columns: 1fr; /* 메인 콘텐츠 내부도 한 컬럼으로 변경 */
+    gap: 25px;
+  }
+  .grid-item {
+    padding: 30px;
+  }
+  .item-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  .edit-icon {
+    font-size: 20px;
+  }
+  .info-row {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  .info-label {
+    min-width: 100px;
+  }
+  .info-row.special-notes {
+    margin-top: 15px;
+    padding-top: 15px;
+  }
+  .score-circle-large {
+    width: 200px;
+    height: 200px;
+    font-size: 60px;
+  }
+  .score-status-label {
+    font-size: 28px;
+  }
+  .score-description {
+    font-size: 18px;
+  }
+  .file-upload-title {
+    margin-top: 30px;
+  }
+  .file-upload-button {
+    padding: 12px 25px;
+    font-size: 18px;
+  }
+  .uploaded-file-item {
+    font-size: 16px;
+  }
+  .report-dropdown-group {
+    margin-bottom: 15px;
+  }
+  .report-dropdown {
+    padding: 12px 20px;
+    font-size: 18px;
+  }
+  .dropdown-arrow-icon {
+    font-size: 18px;
+  }
+  .deduction-title {
+    margin-top: 30px;
+  }
+  /* 감점 사유 로그 박스 스타일 반응형 */
+  .deduction-log-box {
+    padding: 15px;
+    max-height: 200px; /* 높이 조절 */
+    font-size: 16px;
+  }
+  .deduction-log-box li {
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+  }
+  .deduction-log-box .log-date {
+    margin-right: 8px;
+  }
+  .deduction-log-box .no-log-message {
+    padding: 15px;
+  }
+
+  .download-report-button {
+    padding: 18px 25px;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 768px) { /* 모바일 최적화 */
+  .dashboard-header-bar {
+    padding: 15px 20px;
+    height: 60px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  .header-left {
+    width: 100%;
+    justify-content: center;
+    gap: 20px;
+  }
+  .header-logo-img {
+    height: 30px;
+  }
+  .main-nav {
+    width: 100%;
+    order: 2;
+  }
+  .main-nav ul {
+    justify-content: space-around;
+    gap: 10px;
+  }
+  .main-nav li {
+    font-size: 14px;
+    padding-bottom: 3px;
+  }
+  .main-nav li.active::after {
+    height: 2px;
+  }
+  .header-login-button {
+    padding: 8px 15px;
+    font-size: 14px;
+    order: 1;
+  }
+
+  .dashboard-main-container {
+    padding: 30px 15px;
+  }
+  .dashboard-title {
+    font-size: 40px;
+    text-align: center;
+    margin-bottom: 25px;
+  }
+
+  .content-layout-grid {
+    gap: 20px;
+  }
+  .sidebar-section {
+    padding: 20px;
+  }
+  .sidebar-search-box {
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+  }
+  .sidebar-search-input,
+  .sidebar-search-button {
+    width: 100%;
+    font-size: 14px;
+    padding: 10px;
+  }
+  .sidebar-place-list .list-title { /* 클래스명 변경 */
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  .sidebar-place-list li { /* 클래스명 변경 */
+    font-size: 16px;
+    padding: 10px 5px;
+  }
+
+  .grid-item {
+    padding: 20px;
+  }
+  .item-title {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+  .edit-icon {
+    font-size: 18px;
+  }
+  .info-row {
+    font-size: 16px;
+    margin-bottom: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .info-label {
+    min-width: unset;
+    margin-bottom: 5px;
+  }
+  .info-row.special-notes {
+    margin-top: 15px;
+    padding-top: 15px;
+  }
+  .score-circle-large {
+    width: 150px;
+    height: 150px;
+    font-size: 50px;
+  }
+  .score-status-label {
+    font-size: 24px;
+  }
+  .score-description {
+    font-size: 16px;
+  }
+  .file-upload-title {
+    margin-top: 25px;
+  }
+  .file-upload-button {
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+  .uploaded-file-item {
+    font-size: 14px;
+  }
+  .report-dropdown-group {
+    margin-bottom: 10px;
+  }
+  .report-dropdown {
+    padding: 10px 15px;
+    font-size: 16px;
+  }
+  .dropdown-arrow-icon {
+    font-size: 16px;
+  }
+  .deduction-title {
+    margin-top: 25px;
+  }
+  /* 감점 사유 로그 박스 스타일 반응형 */
+  .deduction-log-box {
+    padding: 10px;
+    max-height: 150px; /* 높이 조절 */
+    font-size: 14px;
+  }
+  .deduction-log-box li {
+    margin-bottom: 6px;
+    padding-bottom: 3px;
+  }
+  .deduction-log-box .log-date {
+    margin-right: 5px;
+  }
+  .deduction-log-box .no-log-message {
+    padding: 10px;
+  }
+  .download-report-button {
+    padding: 15px 20px;
+    font-size: 18px;
+  }
+}

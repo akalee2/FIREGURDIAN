@@ -1,0 +1,271 @@
+// src/components/SignupPageThreeBranch.js
+import React, { useState } from 'react';
+import './SignupPageThreeBranch.css';
+import FireGuardianLogo from '../assets/로고.png'; // 기존 로고 이미지 재사용
+import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa'; // 아이콘 사용
+
+function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
+  const [id, setId] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [detailAddress, setDetailAddress] = useState('');
+
+  // 유효성 검사 상태
+  const [isIdAvailable, setIsIdAvailable] = useState(null); // null: 확인 전, true: 사용 가능, false: 사용 불가
+  const [isPasswordMatched, setIsPasswordMatched] = useState(null); // null: 확인 전, true: 일치, false: 불일치
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false); // 휴대폰 인증 여부
+
+  // 비밀번호 확인 로직
+  React.useEffect(() => {
+    if (password && confirmPassword) {
+      setIsPasswordMatched(password === confirmPassword);
+    } else {
+      setIsPasswordMatched(null);
+    }
+  }, [password, confirmPassword]);
+
+  const handleIdCheck = () => {
+    // 실제 아이디 중복 확인 API 호출 로직
+    // 여기서는 간단히 예시로 구현합니다.
+    if (id === 'testuser') {
+      setIsIdAvailable(false); // 이미 사용 중인 아이디
+      alert('이미 사용 중인 아이디입니다.');
+    } else if (id.length < 8 || id.length > 16) {
+      setIsIdAvailable(false);
+      alert('아이디는 8~16자 이내의 영문/숫자/기호여야 합니다.');
+    } else {
+      setIsIdAvailable(true); // 사용 가능한 아이디
+      alert('사용 가능한 아이디입니다.');
+    }
+  };
+
+  const handlePhoneVerification = () => {
+    // 실제 휴대폰 인증 로직 (SMS 발송 등)
+    alert('휴대폰 인증 코드를 발송했습니다. (실제 기능 아님)');
+    // 인증 성공 시 setIsPhoneVerified(true);
+    setIsPhoneVerified(true); // 임시로 바로 성공 처리
+  };
+
+  const handleAddressSearch = () => {
+    // 실제 우편번호 검색 API 호출 로직
+    alert('우편번호 검색 팝업 (실제 기능 아님)');
+    // 검색 결과로 주소 설정
+    setAddress('서울특별시 강남구 테헤란로 123'); // 예시 주소
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // 필수 입력 필드 및 유효성 검사 확인
+    if (!id || !password || !confirmPassword || !name || !phone || !address) {
+      alert('모든 필수 정보를 입력해주세요.');
+      return;
+    }
+    if (isIdAvailable !== true) {
+      alert('아이디 중복 확인을 완료하거나 사용 가능한 아이디를 입력해주세요.');
+      return;
+    }
+    if (isPasswordMatched !== true) {
+      alert('비밀번호가 일치하지 않습니다.');
+      return;
+    }
+    if (!isPhoneVerified) {
+      alert('휴대폰 인증을 완료해주세요.');
+      return;
+    }
+
+    console.log('회원 정보:', { id, password, name, phone, address, detailAddress });
+    onNextClick(); // 다음 페이지로 이동
+  };
+
+  return (
+    <div className="signup-page-three-branch">
+      {/* 상단 헤더 바 */}
+      <div className="signup-header-bar">
+        <div className="header-logo">
+          <img src={FireGuardianLogo} alt="Fire Guardian Logo" className="header-logo-img" />
+        </div>
+        <button className="header-login-button" onClick={onLoginClick}>
+          로그인
+        </button>
+      </div>
+
+      {/* 메인 컨테이너 */}
+      <div className="signup-main-container">
+        <h1 className="signup-title">회원가입</h1>
+
+        {/* 브레드크럼 */}
+        <div className="breadcrumb">
+          <span>Home</span> / <span>회원가입</span> / <span className="current-step">정보 입력</span>
+        </div>
+
+        {/* 스텝 인디케이터 */}
+        <div className="step-indicator">
+          <div className="step">
+            <div className="step-number">01</div>
+            <div className="step-text">회원유형선택</div>
+          </div>
+          <div className="step-arrow"></div>
+          <div className="step">
+            <div className="step-number">02</div>
+            <div className="step-text">약관동의</div>
+          </div>
+          <div className="step-arrow"></div>
+          <div className="step current"> {/* current 클래스 변경 */}
+            <div className="step-number">03</div>
+            <div className="step-text">정보입력</div>
+          </div>
+          <div className="step-arrow"></div>
+          <div className="step">
+            <div className="step-number">04</div>
+            <div className="step-text">가입완료</div>
+          </div>
+        </div>
+
+        {/* 회원 정보 입력 섹션 */}
+        <div className="member-info-input-section">
+          <div className="section-title-with-circle">회원정보 입력</div>
+
+          <form onSubmit={handleSubmit} className="info-input-form">
+            {/* 아이디 */}
+            <div className="form-row">
+              <label htmlFor="id-input" className="required">아이디</label>
+              <div className="input-with-button">
+                <input
+                  type="text"
+                  id="id-input"
+                  value={id}
+                  onChange={(e) => setId(e.target.value)}
+                  placeholder="아이디 입력"
+                  className="input-field"
+                  required
+                />
+                <button type="button" className="action-button" onClick={handleIdCheck}>
+                  아이디중복확인
+                </button>
+              </div>
+              <span className="input-guide">
+                {isIdAvailable === true && <FaCheckCircle className="success-icon" />}
+                {isIdAvailable === false && <FaTimesCircle className="error-icon" />}
+                (8~16 이내의 영문/숫자/기호 사용 가능)
+              </span>
+            </div>
+
+            {/* 비밀번호 */}
+            <div className="form-row">
+              <label htmlFor="password-input" className="required">비밀번호</label>
+              <input
+                type="password"
+                id="password-input"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="비밀번호 입력"
+                className="input-field"
+                required
+              />
+              <span className="input-guide">(8~16 이내의 영문/숫자/기호 사용 가능)</span>
+            </div>
+
+            {/* 비밀번호 확인 */}
+            <div className="form-row">
+              <label htmlFor="confirm-password-input" className="required">비밀번호 확인</label>
+              <input
+                type="password"
+                id="confirm-password-input"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="비밀번호 재입력"
+                className="input-field"
+                required
+              />
+              <span className="input-guide">
+                {isPasswordMatched === true && <FaCheckCircle className="success-icon" />}
+                {isPasswordMatched === false && <FaTimesCircle className="error-icon" />}
+                {isPasswordMatched === true && '비밀번호가 일치합니다.'}
+                {isPasswordMatched === false && '비밀번호가 일치하지 않습니다.'}
+              </span>
+            </div>
+
+            {/* 이름 */}
+            <div className="form-row">
+              <label htmlFor="name-input" className="required">이름</label>
+              <input
+                type="text"
+                id="name-input"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="이름 입력"
+                className="input-field"
+                required
+              />
+              <span className="input-guide">반드시 실명으로 입력해주세요.</span>
+            </div>
+
+            {/* 휴대폰 */}
+            <div className="form-row">
+              <label htmlFor="phone-input" className="required">휴대폰</label>
+              <div className="input-with-button">
+                <input
+                  type="tel"
+                  id="phone-input"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="ex. 00012345678"
+                  className="input-field"
+                  required
+                />
+                <button type="button" className="action-button" onClick={handlePhoneVerification}>
+                  인증
+                </button>
+              </div>
+              {isPhoneVerified && <span className="input-guide success-message"><FaCheckCircle className="success-icon" /> 인증 완료</span>}
+            </div>
+
+            {/* 사업장 주소 */}
+            <div className="form-row">
+              <label htmlFor="address-input" className="required">사업장 주소</label>
+              <div className="input-with-button">
+                <input
+                  type="text"
+                  id="address-input"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="주소 검색"
+                  className="input-field"
+                  readOnly // 주소는 검색으로만 입력되도록
+                  required
+                />
+                <button type="button" className="action-button" onClick={handleAddressSearch}>
+                  우편번호검색
+                </button>
+              </div>
+              <input
+                type="text"
+                id="detail-address-input"
+                value={detailAddress}
+                onChange={(e) => setDetailAddress(e.target.value)}
+                placeholder="상세 주소"
+                className="input-field detail-address"
+              />
+            </div>
+          </form>
+        </div>
+
+        {/* 하단 버튼 섹션 */}
+        <div className="navigation-buttons">
+          <button className="nav-button prev-button" onClick={onPrevClick}>
+            이전
+          </button>
+          <button className="nav-button next-button" onClick={handleSubmit}>
+            다음
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default SignupPageThreeBranch;

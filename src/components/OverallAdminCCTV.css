@@ -1,0 +1,520 @@
+/* src/components/OverallAdminCCTV.css */
+
+.overall-admin-cctv {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f8f8f8;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+/* 상단 헤더 바 (기존 대시보드 헤더와 동일하게 유지) */
+.dashboard-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 80px;
+  background-color: #2c3e50;
+  color: white;
+  height: 100px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+}
+
+.header-logo-img {
+  height: 50px;
+  width: auto;
+}
+
+.main-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 40px;
+}
+
+.main-nav li {
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.2s;
+  position: relative;
+  padding-bottom: 5px;
+}
+
+.main-nav li:hover {
+  color: #007bff;
+}
+
+.main-nav li.active {
+  color: #007bff;
+}
+
+.main-nav li.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #007bff;
+  border-radius: 2px;
+}
+
+.header-login-button {
+  background: none;
+  border: 2px solid white;
+  color: white;
+  padding: 15px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.header-login-button:hover {
+  background-color: white;
+  color: #2c3e50;
+  border-color: #2c3e50;
+}
+
+/* 메인 컨테이너 */
+.dashboard-main-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 50px;
+  max-width: 1800px; /* 1920px 화면에 맞춰 대폭 증가 */
+  margin: 0 auto;
+  width: 100%;
+}
+
+.dashboard-title {
+  font-size: 64px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 40px;
+  width: 100%;
+  text-align: left;
+}
+
+/* CCTV 콘텐츠 그리드 레이아웃 */
+.cctv-content-grid {
+  display: grid;
+  grid-template-columns: 3fr 1fr; /* 왼쪽 CCTV 영상 3/4, 오른쪽 로그 1/4 */
+  gap: 30px;
+  width: 100%;
+  min-height: 700px; /* 최소 높이 설정 */
+}
+
+/* 왼쪽 메인 영역 (사업장/장소 선택 및 CCTV 영상) */
+.cctv-main-area {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.select-groups-container { /* 사업장/장소 드롭다운 컨테이너 */
+  display: flex;
+  gap: 20px; /* 드롭다운 사이 간격 */
+  margin-bottom: 30px;
+}
+
+.select-group {
+  position: relative;
+  width: 250px; /* 드롭다운 너비 고정 */
+}
+
+.cctv-dropdown {
+  width: 100%;
+  padding: 15px 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 20px;
+  appearance: none; /* 기본 드롭다운 화살표 숨기기 */
+  background-color: white;
+  cursor: pointer;
+  padding-right: 40px; /* 커스텀 화살표 공간 확보 */
+}
+
+.cctv-dropdown:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.dropdown-arrow-icon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #777;
+  font-size: 20px;
+  pointer-events: none; /* 아이콘 클릭 방지 */
+}
+
+.cctv-video-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2x2 그리드 */
+  grid-template-rows: repeat(2, 1fr);
+  gap: 20px;
+  flex-grow: 1;
+}
+
+.video-placeholder {
+  background-color: #000; /* CCTV 영상 배경 */
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* 라벨을 하단에 배치 */
+}
+
+.video-placeholder .cctv-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 이미지가 컨테이너를 채우도록 */
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.video-placeholder .video-label {
+  position: relative; /* z-index를 위해 */
+  z-index: 2;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 18px;
+  padding: 8px 15px;
+  text-align: left;
+}
+
+.highlight-box { /* 이미지에 있는 노란색 박스 */
+  position: absolute;
+  top: 20%;
+  left: 20%;
+  width: 60%;
+  height: 60%;
+  border: 5px solid yellow;
+  z-index: 3; /* 영상 위에 표시 */
+  pointer-events: none; /* 클릭 방지 */
+}
+
+
+/* 오른쪽 사이드바 영역 (화재 감지 일지) */
+.fire-log-sidebar {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.fire-log-sidebar .sidebar-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 25px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.log-list-container {
+  flex-grow: 1;
+  overflow-y: auto; /* 로그가 길어지면 스크롤 */
+  margin-bottom: 30px;
+}
+
+.log-list-container ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.log-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px dashed #eee;
+  font-size: 18px;
+  color: #555;
+}
+
+.log-item:last-child {
+  border-bottom: none;
+}
+
+.log-icon {
+  font-size: 22px;
+  margin-right: 10px;
+}
+
+.log-icon.detected-icon {
+  color: #dc3545; /* 빨간색 */
+}
+
+.log-icon.resolved-icon {
+  color: #28a745; /* 초록색 */
+}
+
+.log-date-time {
+  font-weight: bold;
+  margin-right: 10px;
+  min-width: 100px; /* 날짜/시간 너비 고정 */
+}
+
+.log-type {
+  margin-right: 10px;
+  min-width: 70px; /* 타입 너비 고정 */
+  color: #333;
+}
+
+.log-location {
+  flex-grow: 1;
+  color: #777;
+}
+
+.period-filter-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto; /* 하단에 붙도록 */
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.period-filter-buttons button {
+  flex: 1; /* 동일한 너비로 분배 */
+  padding: 12px 10px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #555;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.period-filter-buttons button:hover {
+  background-color: #e0e0e0;
+}
+
+.period-filter-buttons button.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+
+/* 반응형 디자인 */
+@media (max-width: 1200px) { /* 태블릿 가로 모드 및 작은 데스크톱 */
+  .dashboard-header-bar {
+    padding: 20px 40px;
+    height: 80px;
+  }
+  .header-logo-img {
+    height: 40px;
+  }
+  .main-nav ul {
+    gap: 25px;
+  }
+  .main-nav li {
+    font-size: 18px;
+  }
+  .header-login-button {
+    padding: 12px 25px;
+    font-size: 18px;
+  }
+
+  .dashboard-main-container {
+    padding: 40px 30px;
+    max-width: 95%;
+  }
+  .dashboard-title {
+    font-size: 52px;
+    margin-bottom: 30px;
+  }
+
+  .cctv-content-grid {
+    grid-template-columns: 1fr; /* 작은 화면에서는 한 컬럼으로 변경 */
+    gap: 25px;
+  }
+  .cctv-main-area {
+    padding: 30px;
+  }
+  .select-groups-container {
+    flex-direction: column; /* 세로 정렬 */
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  .select-group {
+    width: 100%; /* 너비 100% */
+  }
+  .cctv-dropdown {
+    padding: 12px 15px;
+    font-size: 18px;
+  }
+  .dropdown-arrow-icon {
+    font-size: 18px;
+  }
+  .cctv-video-grid {
+    gap: 15px;
+  }
+  .video-placeholder .video-label {
+    font-size: 16px;
+    padding: 6px 10px;
+  }
+
+  .fire-log-sidebar {
+    padding: 30px;
+  }
+  .fire-log-sidebar .sidebar-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  .log-item {
+    font-size: 16px;
+    padding: 10px 0;
+  }
+  .log-icon {
+    font-size: 20px;
+  }
+  .log-date-time {
+    min-width: 90px;
+  }
+  .log-type {
+    min-width: 60px;
+  }
+  .period-filter-buttons {
+    gap: 8px;
+    padding-top: 15px;
+  }
+  .period-filter-buttons button {
+    padding: 10px 8px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) { /* 모바일 최적화 */
+  .dashboard-header-bar {
+    padding: 15px 20px;
+    height: 60px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  .header-left {
+    width: 100%;
+    justify-content: center;
+    gap: 20px;
+  }
+  .header-logo-img {
+    height: 30px;
+  }
+  .main-nav {
+    width: 100%;
+    order: 2;
+  }
+  .main-nav ul {
+    justify-content: space-around;
+    gap: 10px;
+  }
+  .main-nav li {
+    font-size: 14px;
+    padding-bottom: 3px;
+  }
+  .main-nav li.active::after {
+    height: 2px;
+  }
+  .header-login-button {
+    padding: 8px 15px;
+    font-size: 14px;
+    order: 1;
+  }
+
+  .dashboard-main-container {
+    padding: 30px 15px;
+  }
+  .dashboard-title {
+    font-size: 40px;
+    text-align: center;
+    margin-bottom: 25px;
+  }
+
+  .cctv-main-area {
+    padding: 20px;
+  }
+  .select-groups-container {
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  .select-group {
+    width: 100%;
+  }
+  .cctv-dropdown {
+    font-size: 16px;
+    padding: 10px 15px;
+  }
+  .dropdown-arrow-icon {
+    font-size: 16px;
+  }
+  .cctv-video-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    gap: 10px;
+  }
+  .video-placeholder .video-label {
+    font-size: 14px;
+    padding: 5px 10px;
+  }
+
+  .fire-log-sidebar {
+    padding: 20px;
+  }
+  .fire-log-sidebar .sidebar-title {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+  .log-item {
+    font-size: 14px;
+    padding: 8px 0;
+  }
+  .log-icon {
+    font-size: 18px;
+  }
+  .log-date-time {
+    min-width: 80px;
+  }
+  .log-type {
+    min-width: 50px;
+  }
+  .period-filter-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+    padding-top: 10px;
+  }
+  .period-filter-buttons button {
+    flex: unset;
+    width: calc(33% - 10px);
+    padding: 8px 5px;
+    font-size: 12px;
+  }
+}

@@ -1,0 +1,460 @@
+/* src/components/SignupPageTwo.css */
+
+.signup-page-two {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f8f8f8;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+/* 상단 헤더 바 (SignupPageOne과 동일하게 유지) */
+.signup-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 80px;
+  background-color: #2c3e50;
+  color: white;
+  height: 100px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+}
+
+.header-logo-img {
+  height: 50px;
+  width: auto;
+}
+
+.header-login-button {
+  background: none;
+  border: 2px solid white;
+  color: white;
+  padding: 15px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.header-login-button:hover {
+  background-color: white;
+  color: #2c3e50;
+  border-color: #2c3e50;
+}
+
+/* 메인 컨테이너 (SignupPageOne과 동일하게 유지) */
+.signup-main-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px 50px;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.signup-title {
+  font-size: 64px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 3px solid #eee;
+  width: 100%;
+  text-align: center;
+}
+
+/* 브레드크럼 (SignupPageOne과 동일하게 유지) */
+.breadcrumb {
+  font-size: 22px;
+  color: #666;
+  margin-bottom: 70px;
+}
+
+.breadcrumb span {
+  margin: 0 8px;
+}
+
+.breadcrumb .current-step {
+  font-weight: bold;
+  color: #007bff;
+}
+
+/* 스텝 인디케이터 (SignupPageOne과 동일하게 유지) */
+.step-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 100px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  color: #999;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.step-number {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32px;
+  margin-bottom: 15px;
+  background-color: white;
+}
+
+.step.current .step-number {
+  background-color: #2c3e50;
+  color: white;
+  border-color: #2c3e50;
+}
+
+.step-arrow {
+  width: 120px;
+  height: 3px;
+  background-color: #ddd;
+  margin: 0 30px;
+  position: relative;
+}
+
+.step-arrow::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  width: 15px;
+  height: 15px;
+  border-top: 3px solid #ddd;
+  border-right: 3px solid #ddd;
+}
+
+/* 약관 동의 섹션 */
+.terms-agreement-section {
+  width: 100%;
+  max-width: 1000px; /* 약관 내용의 최대 너비 */
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  padding: 50px 70px; /* 내부 패딩 */
+  margin-bottom: 80px; /* 하단 버튼과의 간격 */
+}
+
+.term-group {
+  margin-bottom: 40px; /* 각 약관 그룹 사이 간격 */
+}
+
+.term-title-required,
+.term-title-optional {
+  font-size: 28px; /* 제목 폰트 크기 */
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px; /* 제목과 내용 박스 사이 간격 */
+}
+
+.term-title-required::before {
+  content: '○ '; /* 동그라미 기호 추가 */
+  color: #007bff; /* 파란색 */
+}
+
+.term-title-optional::before {
+  content: '○ '; /* 동그라미 기호 추가 */
+  color: #007bff; /* 파란색 */
+}
+
+.term-content-box {
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  padding: 30px; /* 내용 박스 패딩 */
+  border-radius: 10px;
+  max-height: 250px; /* 스크롤을 위한 최대 높이 */
+  overflow-y: auto; /* 내용이 길어지면 스크롤바 생성 */
+  margin-bottom: 25px; /* 내용 박스와 체크박스 사이 간격 */
+  font-size: 18px; /* 내용 폰트 크기 */
+  line-height: 1.8; /* 줄 간격 */
+  color: #555;
+}
+
+.term-content-box p,
+.term-content-box ul {
+  margin-bottom: 15px; /* 단락 및 리스트 항목 간 간격 */
+}
+
+.term-content-box ul {
+  list-style-type: disc; /* 디스크 모양 리스트 */
+  margin-left: 20px;
+}
+
+.term-agreement-checkbox {
+  display: flex;
+  justify-content: flex-end; /* 오른쪽 정렬 */
+  align-items: center;
+  font-size: 20px; /* 폰트 크기 */
+  color: #333;
+}
+
+.term-agreement-checkbox span {
+  margin-right: 20px; /* 텍스트와 라디오 버튼 사이 간격 */
+}
+
+.term-agreement-checkbox label {
+  margin-left: 20px; /* '예'와 '아니오' 라벨 사이 간격 */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.term-agreement-checkbox input[type="radio"] {
+  margin-right: 10px; /* 라디오 버튼과 텍스트 사이 간격 */
+  width: 20px; /* 라디오 버튼 크기 */
+  height: 20px; /* 라디오 버튼 크기 */
+  accent-color: #007bff; /* 라디오 버튼 색상 */
+}
+
+.all-agree-checkbox {
+  text-align: right; /* 오른쪽 정렬 */
+  margin-top: 40px; /* 위쪽 간격 */
+  font-size: 24px; /* 폰트 크기 */
+  font-weight: bold;
+  color: #333;
+}
+
+.all-agree-checkbox label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* 텍스트와 체크박스 전체를 오른쪽으로 */
+}
+
+.all-agree-checkbox input[type="checkbox"] {
+  margin-right: 15px; /* 체크박스와 텍스트 사이 간격 */
+  width: 24px; /* 체크박스 크기 */
+  height: 24px; /* 체크박스 크기 */
+  accent-color: #007bff;
+}
+
+/* 하단 버튼 섹션 */
+.navigation-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 30px; /* 버튼 사이 간격 */
+  width: 100%;
+  margin-top: 50px; /* 약관 섹션과의 간격 */
+}
+
+.nav-button {
+  padding: 20px 50px; /* 패딩 증가 */
+  border: none;
+  border-radius: 10px; /* 둥근 모서리 */
+  font-size: 26px; /* 폰트 크기 증가 */
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  min-width: 200px; /* 버튼 최소 너비 */
+}
+
+.nav-button.prev-button {
+  background-color: #e0e0e0; /* 회색 배경 */
+  color: #555;
+}
+
+.nav-button.prev-button:hover {
+  background-color: #ccc;
+}
+
+.nav-button.next-button {
+  background-color: #007bff; /* 파란색 배경 */
+  color: white;
+}
+
+.nav-button.next-button:hover {
+  background-color: #0056b3;
+}
+
+/* 반응형 디자인 (기존 SignupPageOne과 동일하게 유지) */
+@media (max-width: 1024px) {
+  .signup-header-bar {
+    padding: 20px 30px;
+    height: 70px;
+  }
+  .header-logo-img {
+    height: 35px;
+  }
+  .header-login-button {
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+  .signup-main-container {
+    padding: 50px 20px;
+    max-width: 90%;
+  }
+  .signup-title {
+    font-size: 48px;
+  }
+  .breadcrumb {
+    font-size: 18px;
+    margin-bottom: 40px;
+  }
+  .step-indicator {
+    max-width: 100%;
+    flex-wrap: wrap;
+    margin-bottom: 60px;
+  }
+  .step {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  .step-number {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+  .step-arrow {
+    width: 60px;
+    margin: 0 15px;
+  }
+  .member-type-selection { /* 이 부분은 SignupPageTwo에서는 사용되지 않지만, 다른 페이지에서 재사용될 수 있으므로 유지 */
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 60px;
+  }
+  .member-card { /* 이 부분은 SignupPageTwo에서는 사용되지 않지만, 다른 페이지에서 재사용될 수 있으므로 유지 */
+    padding: 40px;
+    max-width: 90%;
+  }
+  .member-card-title {
+    font-size: 36px;
+  }
+  .member-card-description {
+    font-size: 18px;
+  }
+  .member-card-button {
+    font-size: 20px;
+  }
+  .description-text-bottom {
+    font-size: 18px;
+  }
+
+  /* SignupPageTwo 전용 반응형 조정 */
+  .terms-agreement-section {
+    padding: 30px 40px;
+    max-width: 95%;
+  }
+  .term-title-required,
+  .term-title-optional {
+    font-size: 24px;
+  }
+  .term-content-box {
+    padding: 20px;
+    font-size: 16px;
+  }
+  .term-agreement-checkbox {
+    font-size: 18px;
+  }
+  .all-agree-checkbox {
+    font-size: 20px;
+  }
+  .navigation-buttons {
+    gap: 20px;
+  }
+  .nav-button {
+    padding: 15px 30px;
+    font-size: 20px;
+    min-width: 150px;
+  }
+}
+
+@media (max-width: 768px) {
+  .signup-header-bar {
+    padding: 15px 20px;
+    height: 60px;
+  }
+  .header-logo-img {
+    height: 30px;
+  }
+  .header-login-button {
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+  .signup-title {
+    font-size: 38px;
+  }
+  .breadcrumb {
+    font-size: 14px;
+    margin-bottom: 25px;
+  }
+  .step-indicator {
+    margin-bottom: 40px;
+  }
+  .step {
+    font-size: 12px;
+  }
+  .step-number {
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+  }
+  .step-arrow {
+    width: 30px;
+    margin: 0 10px;
+  }
+
+  /* SignupPageTwo 전용 반응형 조정 */
+  .terms-agreement-section {
+    padding: 20px 25px;
+  }
+  .term-title-required,
+  .term-title-optional {
+    font-size: 20px;
+  }
+  .term-content-box {
+    padding: 15px;
+    font-size: 14px;
+  }
+  .term-agreement-checkbox {
+    flex-direction: column; /* 모바일에서 세로 정렬 */
+    align-items: flex-end;
+    font-size: 16px;
+  }
+  .term-agreement-checkbox span {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+  .term-agreement-checkbox label {
+    margin-left: 0;
+    margin-top: 5px;
+  }
+  .all-agree-checkbox {
+    font-size: 18px;
+  }
+  .navigation-buttons {
+    flex-direction: column; /* 모바일에서 버튼 세로 정렬 */
+    gap: 15px;
+  }
+  .nav-button {
+    padding: 12px 25px;
+    font-size: 18px;
+    min-width: unset;
+    width: 100%;
+  }
+}
