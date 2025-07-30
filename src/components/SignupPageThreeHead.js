@@ -1,8 +1,8 @@
 // src/components/SignupPageThreeHead.js
 import React, { useState, useEffect } from 'react';
 import './SignupPageThreeHead.css';
-import FireGuardianLogo from '../assets/로고.png'; // 기존 로고 이미지 재사용
-import { FaCheckCircle, FaTimesCircle, FaPlusCircle, FaTimes } from 'react-icons/fa'; // 아이콘 사용
+import FireGuardianLogo from '../assets/대비로고.png';
+import { FaCheckCircle, FaTimesCircle, FaPlusCircle, FaTimes } from 'react-icons/fa';
 
 function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
   // 개인 정보 상태
@@ -30,8 +30,16 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
   // 유효성 검사 상태
   const [isIdAvailable, setIsIdAvailable] = useState(null);
   const [isPasswordMatched, setIsPasswordMatched] = useState(null);
-  const [isPhoneVerified, setIsPhoneVerified] = useState(false); // 개인 휴대폰 인증
-  const [isBranchManagerPhoneVerified, setIsBranchManagerPhoneVerified] = useState(false); // 담당자 휴대폰 인증
+
+  // 개인 휴대폰 인증 상태
+  const [phoneVerificationSent, setPhoneVerificationSent] = useState(false);
+  const [phoneCode, setPhoneCode] = useState('');
+  const [isPhoneCodeVerified, setIsPhoneCodeVerified] = useState(false);
+
+  // 담당자 휴대폰 인증 상태
+  const [branchManagerPhoneVerificationSent, setBranchManagerPhoneVerificationSent] = useState(false);
+  const [branchManagerPhoneCode, setBranchManagerPhoneCode] = useState('');
+  const [isBranchManagerPhoneCodeVerified, setIsBranchManagerPhoneCodeVerified] = useState(false);
 
   // 비밀번호 확인 로직
   useEffect(() => {
@@ -43,7 +51,6 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
   }, [password, confirmPassword]);
 
   const handleIdCheck = () => {
-    // 실제 아이디 중복 확인 API 호출 로직 (예시)
     if (id === 'adminuser') {
       setIsIdAvailable(false);
       alert('이미 사용 중인 아이디입니다.');
@@ -57,13 +64,45 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
   };
 
   const handlePhoneVerification = () => {
-    alert('개인 휴대폰 인증 코드를 발송했습니다. (실제 기능 아님)');
-    setIsPhoneVerified(true);
+    if (!phone) {
+      alert('휴대폰 번호를 입력해주세요.');
+      return;
+    }
+    alert('휴대폰 인증 코드를 발송했습니다. (실제 기능 아님)');
+    setPhoneVerificationSent(true);
+    setIsPhoneCodeVerified(false);
   };
 
+  const handleVerifyPhoneCode = () => {
+    if (phoneCode === '1234') { // 예시 코드
+      setIsPhoneCodeVerified(true);
+      alert('휴대폰 인증이 완료되었습니다.');
+    } else {
+      setIsPhoneCodeVerified(false);
+      alert('인증 코드가 올바르지 않습니다.');
+    }
+  };
+
+  // 담당자 휴대폰 인증 발송
   const handleBranchManagerPhoneVerification = () => {
+    if (!branchManagerPhone) {
+      alert('담당자 휴대폰 번호를 입력해주세요.');
+      return;
+    }
     alert('담당자 휴대폰 인증 코드를 발송했습니다. (실제 기능 아님)');
-    setIsBranchManagerPhoneVerified(true);
+    setBranchManagerPhoneVerificationSent(true);
+    setIsBranchManagerPhoneCodeVerified(false);
+  };
+
+  // 담당자 휴대폰 인증 코드 확인
+  const handleVerifyBranchManagerPhoneCode = () => {
+    if (branchManagerPhoneCode === '1234') { // 예시 코드
+      setIsBranchManagerPhoneCodeVerified(true);
+      alert('담당자 휴대폰 인증이 완료되었습니다.');
+    } else {
+      setIsBranchManagerPhoneCodeVerified(false);
+      alert('담당자 인증 코드가 올바르지 않습니다.');
+    }
   };
 
   const handleAddressSearch = (type) => {
@@ -80,7 +119,7 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
       alert('사업장 정보 (사업장명, 주소, 담당자명, 담당자 휴대폰)를 모두 입력해주세요.');
       return;
     }
-    if (!isBranchManagerPhoneVerified) {
+    if (!isBranchManagerPhoneCodeVerified) {
       alert('사업장 담당자 휴대폰 인증을 완료해주세요.');
       return;
     }
@@ -89,18 +128,20 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
       ...registeredBranches,
       {
         name: branchName,
-        address: `${branchAddress} ${branchDetailAddress}`,
+        address: `${branchAddress} ${branchDetailAddress}`.trim(),
         manager: branchManagerName,
         phone: branchManagerPhone,
       },
     ]);
-    // 입력 필드 초기화
+
     setBranchName('');
     setBranchAddress('');
     setBranchDetailAddress('');
     setBranchManagerName('');
     setBranchManagerPhone('');
-    setIsBranchManagerPhoneVerified(false);
+    setBranchManagerPhoneVerificationSent(false);
+    setBranchManagerPhoneCode('');
+    setIsBranchManagerPhoneCodeVerified(false);
   };
 
   const handleRemoveBranch = (index) => {
@@ -110,12 +151,11 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // 필수 입력 필드 및 유효성 검사 확인 (간소화)
     if (!id || !password || !confirmPassword || !name || !phone || !headOfficeName || !headOfficeAddress) {
       alert('모든 필수 정보를 입력해주세요.');
       return;
     }
-    if (isIdAvailable !== true || isPasswordMatched !== true || !isPhoneVerified) {
+    if (isIdAvailable !== true || isPasswordMatched !== true || !isPhoneCodeVerified) {
       alert('입력 정보를 다시 확인해주세요.');
       return;
     }
@@ -129,7 +169,7 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
       headOfficeName, headOfficeAddress, headOfficeDetailAddress,
       registeredBranches,
     });
-    onNextClick(); // 다음 페이지 (가입 완료)로 이동
+    onNextClick();
   };
 
   return (
@@ -148,31 +188,40 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
       <div className="signup-main-container">
         <h1 className="signup-title">회원가입</h1>
 
-        {/* 브레드크럼 */}
-        <div className="breadcrumb">
-          <span>Home</span> / <span>회원가입</span> / <span className="current-step">정보 입력</span>
+        {/* Breadcrumbs / Navigation Path */}
+        <div className="breadcrumb-nav">
+          <span>Home</span> / <span>회원가입</span> / <span className="active-breadcrumb">정보 입력</span>
+          <div className="breadcrumb-divider"></div>
         </div>
 
-        {/* 스텝 인디케이터 */}
-        <div className="step-indicator">
-          <div className="step">
-            <div className="step-number">01</div>
-            <div className="step-text">회원유형선택</div>
+        {/* 진행 단계 표시 */}
+        <div className="progress-steps">
+          <div className="progress-step">
+            <div className="progress-step-circle">
+              <span className="step-number">01</span>
+              <span className="step-text">회원유형선택</span>
+            </div>
           </div>
-          <div className="step-arrow"></div>
-          <div className="step">
-            <div className="step-number">02</div>
-            <div className="step-text">약관동의</div>
+          <div className="progress-arrow"></div>
+          <div className="progress-step">
+            <div className="progress-step-circle">
+              <span className="step-number">02</span>
+              <span className="step-text">약관동의</span>
+            </div>
           </div>
-          <div className="step-arrow"></div>
-          <div className="step current"> {/* current 클래스 변경 */}
-            <div className="step-number">03</div>
-            <div className="step-text">정보입력</div>
+          <div className="progress-arrow"></div>
+          <div className="progress-step active">
+            <div className="progress-step-circle">
+              <span className="step-number">03</span>
+              <span className="step-text">정보 입력</span>
+            </div>
           </div>
-          <div className="step-arrow"></div>
-          <div className="step">
-            <div className="step-number">04</div>
-            <div className="step-text">가입완료</div>
+          <div className="progress-arrow"></div>
+          <div className="progress-step">
+            <div className="progress-step-circle">
+              <span className="step-number">04</span>
+              <span className="step-text">가입 완료</span>
+            </div>
           </div>
         </div>
 
@@ -181,7 +230,6 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
           <div className="section-title-with-circle">회원정보 입력</div>
 
           <form onSubmit={handleSubmit} className="info-input-form">
-            {/* 개인 정보 입력 필드는 지점관리자와 동일 */}
             {/* 아이디 */}
             <div className="form-row">
               <label htmlFor="id-input" className="required">아이디</label>
@@ -273,11 +321,36 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                   인증
                 </button>
               </div>
-              {isPhoneVerified && <span className="input-guide success-message"><FaCheckCircle className="success-icon" /> 인증 완료</span>}
             </div>
+
+            {/* 휴대폰 인증 코드 입력 */}
+            {phoneVerificationSent && (
+              <div className="form-row">
+                <label htmlFor="phone-code-input" className="required">인증 코드 입력</label>
+                <div className="input-with-button">
+                  <input
+                    type="text"
+                    id="phone-code-input"
+                    value={phoneCode}
+                    onChange={(e) => setPhoneCode(e.target.value)}
+                    placeholder="인증 코드 입력"
+                    className="input-field"
+                  />
+                  <button type="button" className="action-button" onClick={handleVerifyPhoneCode}>
+                    확인
+                  </button>
+                </div>
+                {isPhoneCodeVerified && (
+                  <span className="input-guide success-message">
+                    <FaCheckCircle className="success-icon" /> 인증 완료
+                  </span>
+                )}
+              </div>
+            )}
 
             {/* 본사 기본 정보 입력 */}
             <div className="section-title-with-circle second-section-title">본사 기본 정보 입력</div>
+
             {/* 본사명 */}
             <div className="form-row">
               <label htmlFor="head-office-name-input" className="required">본사명</label>
@@ -291,6 +364,7 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                 required
               />
             </div>
+
             {/* 본사 주소 */}
             <div className="form-row">
               <label htmlFor="head-office-address-input" className="required">본사 주소</label>
@@ -321,6 +395,7 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
 
             {/* 사업장 정보 등록 */}
             <div className="section-title-with-circle second-section-title">사업장 정보 등록</div>
+
             {/* 사업장명 */}
             <div className="form-row">
               <label htmlFor="branch-name-input" className="required">사업장명</label>
@@ -334,6 +409,7 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                 required
               />
             </div>
+
             {/* 사업장 주소 */}
             <div className="form-row">
               <label htmlFor="branch-address-input" className="required">사업장 주소</label>
@@ -361,6 +437,7 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                 className="input-field detail-address"
               />
             </div>
+
             {/* 담당자명 */}
             <div className="form-row">
               <label htmlFor="branch-manager-name-input" className="required">담당자명</label>
@@ -374,6 +451,7 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                 required
               />
             </div>
+
             {/* 담당자 휴대폰 */}
             <div className="form-row">
               <label htmlFor="branch-manager-phone-input" className="required">담당자 휴대폰</label>
@@ -391,8 +469,33 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                   인증
                 </button>
               </div>
-              {isBranchManagerPhoneVerified && <span className="input-guide success-message"><FaCheckCircle className="success-icon" /> 인증 완료</span>}
             </div>
+
+            {/* 담당자 휴대폰 인증 코드 입력 */}
+            {branchManagerPhoneVerificationSent && (
+              <div className="form-row">
+                <label htmlFor="branch-manager-phone-code-input" className="required">인증 코드 입력</label>
+                <div className="input-with-button">
+                  <input
+                    type="text"
+                    id="branch-manager-phone-code-input"
+                    value={branchManagerPhoneCode}
+                    onChange={(e) => setBranchManagerPhoneCode(e.target.value)}
+                    placeholder="인증 코드 입력"
+                    className="input-field"
+                  />
+                  <button type="button" className="action-button" onClick={handleVerifyBranchManagerPhoneCode}>
+                    확인
+                  </button>
+                </div>
+                {isBranchManagerPhoneCodeVerified && (
+                  <span className="input-guide success-message">
+                    <FaCheckCircle className="success-icon" /> 인증 완료
+                  </span>
+                )}
+              </div>
+            )}
+
             <div className="add-branch-button-container">
               <button type="button" className="add-branch-button" onClick={handleAddBranch}>
                 추가 <FaPlusCircle />
@@ -410,7 +513,7 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                       <th>사업장 주소</th>
                       <th>담당자명</th>
                       <th>담당자 휴대폰</th>
-                      <th></th> {/* 삭제 버튼을 위한 컬럼 */}
+                      <th>삭제</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -441,7 +544,17 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
           <button className="nav-button prev-button" onClick={onPrevClick}>
             이전
           </button>
-          <button className="nav-button next-button" onClick={handleSubmit}>
+          <button
+            className="nav-button next-button"
+            onClick={(e) => {
+              e.preventDefault();
+              if (!isPhoneCodeVerified) {
+                alert('휴대폰 인증을 완료해주세요.');
+                return;
+              }
+              handleSubmit(e);
+            }}
+          >
             다음
           </button>
         </div>
