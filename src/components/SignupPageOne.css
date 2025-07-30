@@ -89,6 +89,7 @@
 .breadcrumb-nav {
   font-size: 28px; /* 글꼴 크기를 22px->28px로 설정합니다. */
   color: #777; /* 글꼴 색상을 회색으로 설정합니다. */
+  margin-top: -12px;
   margin-bottom: 90px; /* Breadcrumbs 아래에 60px->78px 외부 여백을 설정합니다. */
   position: relative; /* 자식 요소인 밑줄(.breadcrumb-line)의 위치 지정을 위해 상대 위치로 설정합니다. */
   padding-bottom: 0; /* 밑줄을 없애므로 패딩도 0으로 설정합니다. */
@@ -185,9 +186,8 @@
 
 /* 진행 단계 사이의 화살표 바의 스타일을 정의합니다. */
 .progress-arrow {
-  width: 91px; /* 화살표 길이 70px->91px로 증가 */
-  height: 4px; /* 화살표 바의 두께를 3px->4px로 설정합니다. */
-  background-color: #ccc; /* 화살표 바의 배경색을 회색으로 설정합니다. */
+  height: 1px; /* 화살표 바의 두께를 3px->4px로 설정합니다. */
+  background-color: #efefef; /* 화살표 바의 배경색을 회색으로 설정합니다. */
   position: relative; /* 화살표 머리(.progress-arrow::after)의 위치 지정을 위해 상대 위치로 설정합니다. */
 }
 
@@ -287,197 +287,4 @@
   text-align: center; /* 텍스트를 중앙 정렬합니다. */
   line-height: 1.5; /* 줄 간격을 글꼴 크기의 1.5배로 설정하여 가독성을 높입니다. */
   margin-top: 0px; /* 안내 문구 위에 30px->40px 외부 여백을 설정합니다. */
-}
-
-
-/* 반응형 디자인을 위한 미디어 쿼리 (화면 너비 1200px 이하일 때 적용) */
-@media (max-width: 1200px) {
-  /* 헤더 바의 패딩과 높이를 조정합니다. */
-  .signup-header-bar {
-    padding: 20px 40px;
-    height: 80px;
-  }
-  /* 로고 이미지의 높이를 조정합니다. */
-  .header-logo-img {
-    height: 60px; /* 반응형에서도 높이 조절 */
-  }
-  /* 로그인 버튼의 패딩과 폰트 크기를 조정합니다. */
-  .header-login-button {
-    padding: 12px 25px;
-    font-size: 18px;
-  }
-
-  /* 메인 컨테이너의 패딩과 최대 너비를 조정합니다. */
-  .signup-main-container {
-    padding: 78px 39px; /* 상하 60px->78px, 좌우 30px->39px 패딩 조절 */
-    max-width: 100%; /* 최대 너비를 뷰포트의 95%로 설정합니다. */
-  }
-  /* 제목의 폰트 크기와 하단 여백을 조정합니다. */
-  .signup-title {
-    font-size: 65px; /* 50px->65px */
-    margin-bottom: 52px; /* 40px->52px */
-  }
-  /* Breadcrumbs의 폰트 크기와 하단 여백을 조정합니다. */
-  .breadcrumb-nav {
-    font-size: 26px; /* 20px->26px */
-    margin-bottom: 65px; /* 50px->65px */
-  }
-  /* Breadcrumbs 밑줄은 숨겨져 있으므로 변경 없음 */
-
-  /* 진행 단계 컨테이너의 간격과 하단 여백을 조정합니다. */
-  .progress-steps {
-    gap: 32px; /* 25px->32px 간격 조절 */
-    margin-bottom: 104px; /* 80px->104px 하단 여백 조절 */
-  }
-  /* 진행 단계 원형의 크기를 조정합니다. */
-  .progress-step-circle {
-    width: 182px; /* 140px->182px 원 크기 조절 */
-    height: 182px;
-  }
-  /* 진행 단계 원형 내부 숫자의 폰트 크기를 조정합니다. */
-  .progress-step-circle .step-number {
-    font-size: 52px; /* 40px->52px 숫자 폰트 크기 조절 */
-  }
-  /* 진행 단계 원형 내부 텍스트의 폰트 크기를 조정합니다. */
-  .progress-step-circle .step-text {
-    font-size: 31px; /* 24px->31px 텍스트 폰트 크기 조절 */
-  }
-  /* 화살표 바의 길이와 두께를 조정합니다. */
-  .progress-arrow {
-    width: 78px; /* 60px->78px */
-    height: 3px; /* 2px->3px */
-  }
-  /* 화살표 머리의 위치와 크기, 테두리 두께를 조정합니다. */
-  .progress-arrow::after {
-    right: -5px; /* 기존과 동일 */
-    width: 16px; /* 12px->16px */
-    height: 16px; /* 12px->16px */
-    border-width: 3px; /* 2px->3px */
-  }
-
-  /* 카드 컨테이너를 세로로 정렬하고 간격 및 하단 여백을 조정합니다. */
-  .signup-cards-container {
-    flex-direction: column; /* 카드를 세로로 쌓습니다. */
-    align-items: center; /* 세로 정렬 시 가로 중앙에 배치합니다. */
-    gap: 52px; /* 40px->52px */
-    margin-bottom: 104px; /* 80px->104px */
-  }
-  /* 카드들의 너비와 패딩을 조정합니다. */
-  .signup-card {
-    width: 100%; /* 카드의 너비를 85%로 늘립니다. */
-    padding: 65px; /* 50px->65px */
-  }
-  /* 카드 제목의 폰트 크기와 하단 여백을 조정합니다. */
-  .card-title {
-    font-size: 52px; /* 40px->52px */
-    margin-bottom: 16px; /* 12px->16px */
-  }
-  /* 카드 설명 텍스트의 폰트 크기와 하단 여백을 조정합니다. */
-  .card-description {
-    font-size: 26px; /* 20px->26px */
-    margin-bottom: 45px; /* 35px->45px */
-  }
-  /* 카드 버튼의 폰트 크기를 조정합니다. */
-  .signup-card-button {
-    font-size: 28px; /* 22px->28px */
-  }
-  /* 하단 안내 문구의 폰트 크기와 상단 여백을 조정합니다. */
-  .bottom-info-text {
-    font-size: 31px; /* 24px->31px */
-    margin-top: 32px; /* 25px->32px */
-  }
-}
-
-@media (max-width: 768px) { /* 모바일 최적화 */
-  /* 헤더 바의 패딩과 높이를 조정합니다. */
-  .signup-header-bar {
-    padding: 15px 20px;
-    height: 60px;
-  }
-  /* 로고 이미지의 높이를 조정합니다. */
-  .header-logo-img {
-    height: 40px; /* 반응형에서도 높이 조절 */
-  }
-  /* 로그인 버튼의 패딩과 폰트 크기를 조정합니다. */
-  .header-login-button {
-    padding: 8px 15px;
-    font-size: 14px;
-  }
-
-  /* 메인 컨테이너의 패딩을 조정합니다. */
-  .signup-main-container {
-    padding: 52px 20px; /* 상하 40px->52px, 좌우 15px->20px 패딩 조절 */
-  }
-  /* 제목의 폰트 크기와 하단 여백을 조정합니다. */
-  .signup-title {
-    font-size: 58px; /* 45px->58px */
-    margin-bottom: 39px; /* 30px->39px */
-  }
-  /* Breadcrumbs의 폰트 크기와 하단 여백을 조정합니다. */
-  .breadcrumb-nav {
-    font-size: 23px; /* 18px->23px */
-    margin-bottom: 52px; /* 40px->52px */
-  }
-
-  /* 진행 단계 컨테이너를 줄바꿈 가능하게 하고 간격 및 하단 여백을 조정합니다. */
-  .progress-steps {
-    flex-wrap: wrap; /* 요소들이 한 줄에 다 들어가지 않을 때 다음 줄로 줄바꿈됩니다. */
-    gap: 20px; /* 15px->20px 간격 조절 */
-    margin-bottom: 78px; /* 60px->78px 하단 여백 조절 */
-  }
-  /* 진행 단계 원형의 크기를 조정합니다. */
-  .progress-step-circle {
-    width: 156px; /* 120px->156px 원 크기 조절 */
-    height: 156px;
-  }
-  /* 진행 단계 원형 내부 숫자의 폰트 크기를 조정합니다. */
-  .progress-step-circle .step-number {
-    font-size: 49px; /* 38px->49px 숫자 폰트 크기 조절 */
-  }
-  /* 진행 단계 원형 내부 텍스트의 폰트 크기를 조정합니다. */
-  .progress-step-circle .step-text {
-    font-size: 26px; /* 20px->26px 텍스트 폰트 크기 조절 */
-  }
-  /* 화살표 바의 길이와 두께를 조정합니다. */
-  .progress-arrow {
-    width: 39px; /* 30px->39px */
-    height: 3px; /* 2px->3px */
-  }
-  /* 화살표 머리의 위치와 크기, 테두리 두께를 조정합니다. */
-  .progress-arrow::after {
-    right: -4px; /* 기존과 동일 */
-    width: 13px; /* 10px->13px */
-    height: 13px; /* 10px->13px */
-    border-width: 3px; /* 2px->3px */
-  }
-
-  /* 카드 컨테이너의 간격과 하단 여백을 조정합니다. */
-  .signup-cards-container {
-    gap: 39px; /* 30px->39px */
-    margin-bottom: 78px; /* 60px->78px */
-  }
-  /* 카드들의 너비와 패딩을 조정합니다. */
-  .signup-card {
-    width: 100%;
-    padding: 52px; /* 40px->52px */
-  }
-  /* 카드 제목의 폰트 크기와 하단 여백을 조정합니다. */
-  .card-title {
-    font-size: 45px; /* 35px->45px */
-    margin-bottom: 13px; /* 10px->13px */
-  }
-  /* 카드 설명 텍스트의 폰트 크기와 하단 여백을 조정합니다. */
-  .card-description {
-    font-size: 23px; /* 18px->23px */
-    margin-bottom: 39px; /* 30px->39px */
-  }
-  /* 카드 버튼의 폰트 크기를 조정합니다. */
-  .signup-card-button {
-    font-size: 26px; /* 20px->26px */
-  }
-  /* 하단 안내 문구의 폰트 크기와 상단 여백을 조정합니다. */
-  .bottom-info-text {
-    font-size: 28px; /* 22px->28px */
-    margin-top: 26px; /* 20px->26px */
-  }
 }

@@ -1,7 +1,7 @@
 // src/components/SignupPageTwo.js
 import React, { useState, useEffect } from 'react';
 import './SignupPageTwo.css';
-import FireGuardianLogo from '../assets/로고.png'; // 기존 로고 이미지 재사용
+import FireGuardianLogo from '../assets/대비로고.png'; // 기존 로고 이미지 재사용
 
 function SignupPageTwo({ onLoginClick, onPrevClick, onNextClick }) {
   const [agreeService, setAgreeService] = useState(false);
@@ -32,45 +32,57 @@ function SignupPageTwo({ onLoginClick, onPrevClick, onNextClick }) {
 
   return (
     <div className="signup-page-two">
-      {/* 상단 헤더 바 (SignupPageOne과 동일) */}
-      <div className="signup-header-bar">
-        <div className="header-logo">
-          <img src={FireGuardianLogo} alt="Fire Guardian Logo" className="header-logo-img" />
-        </div>
-        <button className="header-login-button" onClick={onLoginClick}>
-          로그인
-        </button>
-      </div>
+          {/* 상단 헤더 바 (기존 대시보드 헤더와 유사하게 유지) */}
+          <div className="signup-header-bar">
+            <div className="header-left">
+              {/* 로고 클릭 시 로그인 페이지로 이동 */}
+              <div className="header-logo" onClick={onLoginClick} style={{ cursor: 'pointer' }}>
+                <img src={FireGuardianLogo} alt="Fire Guardian Logo" className="header-logo-img" />
+              </div>
+            </div>
+            <button className="header-login-button" onClick={onLoginClick}>
+              로그인
+            </button>
+          </div>
 
       {/* 메인 컨테이너 */}
       <div className="signup-main-container">
         <h1 className="signup-title">회원가입</h1>
 
-        {/* 브레드크럼 (현재 스텝만 변경) */}
-        <div className="breadcrumb">
-          <span>Home</span> / <span>회원가입</span> / <span className="current-step">약관 동의</span>
+        {/* Breadcrumbs / Navigation Path */}
+        <div className="breadcrumb-nav">
+          <span>Home</span> / <span>회원가입</span> / <span className="active-breadcrumb">약관동의</span>
+          <div className="breadcrumb-divider"></div>
         </div>
 
-        {/* 스텝 인디케이터 (현재 스텝만 변경) */}
-        <div className="step-indicator">
-          <div className="step">
-            <div className="step-number">01</div>
-            <div className="step-text">회원유형선택</div>
+        {/* 진행 단계 표시 */}
+        <div className="progress-steps">
+          <div className="progress-step">
+            <div className="progress-step-circle">
+              <span className="step-number">01</span>
+              <span className="step-text">회원유형선택</span>
+            </div>
           </div>
-          <div className="step-arrow"></div>
-          <div className="step current"> {/* current 클래스 변경 */}
-            <div className="step-number">02</div>
-            <div className="step-text">약관동의</div>
+          <div className="progress-arrow"></div> {/* 화살표 */}
+          <div className="progress-step active">
+            <div className="progress-step-circle">
+              <span className="step-number">02</span>
+              <span className="step-text">약관동의</span>
+            </div>
           </div>
-          <div className="step-arrow"></div>
-          <div className="step">
-            <div className="step-number">03</div>
-            <div className="step-text">정보입력</div>
+          <div className="progress-arrow"></div> {/* 화살표 */}
+          <div className="progress-step">
+            <div className="progress-step-circle">
+              <span className="step-number">03</span>
+              <span className="step-text">정보 입력</span>
+            </div>
           </div>
-          <div className="step-arrow"></div>
-          <div className="step">
-            <div className="step-number">04</div>
-            <div className="step-text">가입완료</div>
+          <div className="progress-arrow"></div> {/* 화살표 */}
+          <div className="progress-step">
+            <div className="progress-step-circle">
+              <span className="step-number">04</span>
+              <span className="step-text">가입 완료</span>
+            </div>
           </div>
         </div>
 
@@ -84,7 +96,7 @@ function SignupPageTwo({ onLoginClick, onPrevClick, onNextClick }) {
               <p>이 약관은 FireGuardian(이하 "회사")이 제공하는 소방 안전 분석 및 사업장 관리 서비스(이하 "서비스")의 이용 조건 및 절차, 회사와 회원 간의 권리 및 의무를 규정함을 목적으로 합니다.</p>
               <p><strong>제2조 (회원 가입 및 자격)</strong></p>
               <p>1. 회원은 사업장 대표 또는 담당자 자격으로 가입할 수 있으며, 가입 시 회사의 승인을 거쳐야 합니다.</p>
-              {/* 더 많은 약관 내용 추가 가능 */}
+              {/******** 더 많은 약관 내용 추가 가능 ********/}
             </div>
             <div className="term-agreement-checkbox">
               <span>서비스 이용 약관에 동의합니다.</span>
