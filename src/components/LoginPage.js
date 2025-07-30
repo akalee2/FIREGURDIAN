@@ -17,7 +17,7 @@ function LoginPage({ onSignupClick, onLoginSuccess }) {
     console.log('Password:', password);
     console.log('Remember ID:', rememberId);
     
-    // --- 임시 로그인 인증 로직 시작 ---
+    // ******* --- 임시 로그인 인증 로직 시작 --- *******
     if (id === '1234' && password === '1234') {
       alert('총괄관리자 로그인 성공!');
       if (onLoginSuccess) {

@@ -1,7 +1,7 @@
 // src/components/BranchAdminCCTV.js
 import React, { useState } from 'react';
 import './BranchAdminCCTV.css';
-import FireGuardianLogo from '../assets/로고.png'; // 기존 로고 이미지 재사용
+import FireGuardianLogo from '../assets/대비로고.png'; // 기존 로고 이미지 재사용
 import { FaChevronDown, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa'; // 아이콘 사용
 
 function BranchAdminCCTV({ onLoginClick, onNavigate }) {
@@ -30,14 +30,15 @@ function BranchAdminCCTV({ onLoginClick, onNavigate }) {
       {/* 상단 헤더 바 */}
       <div className="dashboard-header-bar">
         <div className="header-left">
-          <div className="header-logo">
+          {/* 로고 클릭 시 지점 대시보드로 이동 */}
+          <div className="header-logo" onClick={() => onNavigate('branch_dashboard')} style={{ cursor: 'pointer' }}>
             <img src={FireGuardianLogo} alt="Fire Guardian Logo" className="header-logo-img" />
           </div>
           <nav className="main-nav">
             <ul>
-              {/* 지점관리자용 메뉴: 사업장관리, CCTV */}
+              {/* 지점관리자용 메뉴: 사업장관리, CCTV만 표시 */}
               <li onClick={() => onNavigate('branch_dashboard')}>사업장관리</li>
-              <li className="active" onClick={() => onNavigate('branch_cctv')}>CCTV</li>
+              <li className="active" onClick={() => onNavigate('branch_cctv')}>CCTV</li> {/* 현재 페이지 활성화 */}
             </ul>
           </nav>
         </div>

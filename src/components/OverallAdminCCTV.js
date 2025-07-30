@@ -38,7 +38,8 @@ function OverallAdminCCTV({ onLoginClick, onNavigate }) {
       {/* 상단 헤더 바 */}
       <div className="dashboard-header-bar">
         <div className="header-left">
-          <div className="header-logo">
+          {/* 로고 클릭 시 대시보드로 이동 */}
+          <div className="header-logo" onClick={() => onNavigate('dashboard')} style={{ cursor: 'pointer' }}>
             <img src={FireGuardianLogo} alt="Fire Guardian Logo" className="header-logo-img" />
           </div>
           <nav className="main-nav">

@@ -6,30 +6,31 @@
   align-items: center;
   min-height: 100vh; /* 전체 뷰포트 높이 */
   background-color: #FDFAF8; /* 배경색 */
-  width: 100%; /* 너비 100% 차지 */
+  width: 100%; 
 }
 
 .login-container {
   background-color: #ffffff;
-  padding: 100px; /* 이전 80px에서 100px로 증가 */
-  border-radius: 20px; /* 16px에서 20px로 증가 */
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); /* 그림자 효과 더 강화 */
+  padding: 120px; 
+  border-radius: 20px; 
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); 
   width: 100%;
-  max-width: 1000px; /* 800px에서 1000px로 크게 증가 */
+  max-width: 1200px; 
   display: flex;
   flex-direction: column;
-  align-items: center; /* 로고와 회원가입 섹션 중앙 정렬 유지 */
+  align-items: center; 
 }
 
 /* 로고 섹션 */
 .logo-section {
-  margin-bottom: 60px; /* 45px에서 60px로 증가 */
+  margin-bottom: 70px; 
   text-align: center;
   width: 100%;
 }
 
 .logo-section .logo {
-  max-width: 800px; /* 450px에서 600px로 크게 증가 */
+  max-width: 900px; 
+  width: 47%;
   height: auto;
   display: block;
   margin: 0 auto;
@@ -39,7 +40,7 @@
 /* 폼 섹션 */
 .login-form {
   width: 100%;
-  margin-bottom: 30px; /* 30px에서 40px로 증가 */
+  margin-bottom: 30px;
 }
 
 .input-group {
@@ -49,10 +50,10 @@
 
 .input-field {
   width: 100%;
-  padding: 20px 25px; /* 20px 25px에서 25px 30px로 증가 */
-  border: 2px solid #ddd;
-  border-radius: 10px; /* 8px에서 10px로 증가 */
-  font-size: 30px; /* 24px에서 30px로 증가 */
+  padding: 30px 35px; 
+  border: 3px solid #ddd;
+  border-radius: 10px; 
+  font-size: 34px; /* 24px에서 30px로 증가 */
   outline: none;
   transition: border-color 0.2s;
 }
@@ -71,22 +72,22 @@
 
 .password-toggle-icon {
   position: absolute;
-  right: 30px; /* 25px에서 30px로 증가 */
+  right: 30px; 
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
   color: #777;
-  font-size: 38px; /* 32px에서 38px로 증가 */
+  font-size: 38px; 
 }
 
 .login-button {
   width: 100%;
-  padding: 28px; /* 22px에서 28px로 증가 */
+  padding: 28px; 
   background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 10px; /* 8px에서 10px로 증가 */
-  font-size: 36px; /* 28px에서 36px로 증가 */
+  border-radius: 10px; 
+  font-size: 36px; 
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -102,8 +103,8 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin-bottom: 50px; /* 40px에서 50px로 증가 */
-  font-size: 24px; /* 20px에서 24px로 증가 */
+  margin-bottom: 50px; 
+  font-size: 24px; 
   color: #666;
 }
 
@@ -113,16 +114,16 @@
 }
 
 .remember-id input[type="checkbox"] {
-  margin-right: 15px; /* 12px에서 15px로 증가 */
-  width: 24px; /* 20px에서 24px로 증가 */
-  height: 24px; /* 20px에서 24px로 증가 */
+  margin-right: 15px; 
+  width: 24px; 
+  height: 24px; 
   accent-color: #007bff;
 }
 
 .find-links a {
   color: #666;
   text-decoration: none;
-  margin: 0 12px; /* 0 10px에서 0 12px로 증가 */
+  margin: 0 12px; 
 }
 
 .find-links a:hover {
@@ -134,9 +135,9 @@
 .signup-section {
   width: 100%;
   text-align: center;
-  font-size: 28px; /* 22px에서 28px로 증가 */
+  font-size: 28px; 
   color: #555;
-  padding-top: 40px; /* 30px에서 40px로 증가 */
+  padding-top: 40px; 
   border-top: 2px solid #eee;
 }
 
