@@ -1,7 +1,7 @@
 // src/components/SignupPageFour.js
 import React from 'react';
 import './SignupPageFour.css';
-import FireGuardianLogo from '../assets/로고.png'; // 기존 로고 이미지 재사용
+import FireGuardianLogo from '../assets/대비로고.png'; // 기존 로고 이미지 재사용
 import { FaCheckCircle } from 'react-icons/fa'; // 체크 아이콘 사용
 
 function SignupPageFour({ onLoginClick, onDashboardClick }) {
@@ -17,35 +17,44 @@ function SignupPageFour({ onLoginClick, onDashboardClick }) {
         </button>
       </div>
 
-      {/* 메인 컨테이너 */}
+{/* 메인 컨테이너 */}
       <div className="signup-main-container">
         <h1 className="signup-title">회원가입</h1>
 
-        {/* 브레드크럼 */}
-        <div className="breadcrumb">
-          <span>Home</span> / <span>회원가입</span> / <span className="current-step">가입 완료</span>
+        {/* Breadcrumbs / Navigation Path */}
+        <div className="breadcrumb-nav">
+          <span>Home</span> / <span>회원가입</span> / <span className="active-breadcrumb">가입 완료</span>
+          <div className="breadcrumb-divider"></div>
         </div>
 
-        {/* 스텝 인디케이터 */}
-        <div className="step-indicator">
-          <div className="step">
-            <div className="step-number">01</div>
-            <div className="step-text">회원유형선택</div>
+        {/* 진행 단계 표시 */}
+        <div className="progress-steps">
+          <div className="progress-step">
+            <div className="progress-step-circle">
+              <span className="step-number">01</span>
+              <span className="step-text">회원유형선택</span>
+            </div>
           </div>
-          <div className="step-arrow"></div>
-          <div className="step">
-            <div className="step-number">02</div>
-            <div className="step-text">약관동의</div>
+          <div className="progress-arrow"></div>
+          <div className="progress-step">
+            <div className="progress-step-circle">
+              <span className="step-number">02</span>
+              <span className="step-text">약관동의</span>
+            </div>
           </div>
-          <div className="step-arrow"></div>
-          <div className="step">
-            <div className="step-number">03</div>
-            <div className="step-text">정보입력</div>
+          <div className="progress-arrow"></div>
+          <div className="progress-step ">
+            <div className="progress-step-circle">
+              <span className="step-number">03</span>
+              <span className="step-text">정보 입력</span>
+            </div>
           </div>
-          <div className="step-arrow"></div>
-          <div className="step current"> {/* current 클래스 변경 */}
-            <div className="step-number">04</div>
-            <div className="step-text">가입완료</div>
+          <div className="progress-arrow"></div>
+          <div className="progress-step active">
+            <div className="progress-step-circle">
+              <span className="step-number">04</span>
+              <span className="step-text">가입 완료</span>
+            </div>
           </div>
         </div>
 
