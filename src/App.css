@@ -1,27 +1,40 @@
 /* src/App.css */
 
-/* 기본 CSS 초기화 및 전역 설정 */
-html, body, #root, .App {
+/* 모든 페이지의 컨테이너 역할을 하는 .App 스타일 */
+.App {
+  width: 100vw; /* 뷰포트 너비 전체 사용 */
+  min-height: 100vh; /* 뷰포트 높이 전체 사용 */
+  margin: 0; /* 모든 마진 제거 */
+  padding: 0; /* 모든 패딩 제거 */
+  box-sizing: border-box; /* 패딩과 보더가 너비에 포함되도록 설정 */
+  overflow-x: hidden; /* 가로 스크롤 방지 */
+  display: flex;
+  flex-direction: column;
+  /* background-color는 각 컴포넌트에서 설정하는 것이 좋습니다. */
+  /* 필요하다면 여기에 전역 배경색을 설정할 수 있습니다. */
+  background-color: #f8f8f8; /* 예시로 지정 (BranchAdminCCTV의 배경색과 동일) */
+}
+
+/* html, body, #root 에 대한 기본적인 초기화 스타일 */
+html, body, #root {
   margin: 0;
   padding: 0;
-  width: 100%; /* 너비를 100%로 설정 */
-  min-height: 100vh; /* 최소 높이를 뷰포트 높이의 100%로 설정 */
-  display: flex; /* Flexbox를 사용하여 내부 콘텐츠 정렬 용이 */
-  flex-direction: column; /* 세로 방향으로 정렬 */
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden; /* 가로 스크롤바 방지 */
+  height: 100%; /* 부모 요소의 높이를 채우도록 */
+  width: 100%; /* 부모 요소의 너비를 채우도록 */
+  overflow-x: hidden; /* 전체 페이지의 가로 스크롤 방지 */
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* 추가적으로, 개별 페이지 컴포넌트들(LoginPage, SignupPageOne 등)에서 */
+/* 컨텐츠를 중앙에 배치하거나 특정 너비를 유지하고 싶다면, */
+/* 해당 컴포넌트의 CSS 파일 내에서 직접 max-width와 margin: auto를 설정해야 합니다. */
+/* 예시: LoginPage.css */
+/*
+.login-page-container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
-
-/* 추가적으로, 필요한 경우 App 컴포넌트 내부의 컨테이너도 flex-grow를 설정하여 남은 공간을 채우도록 합니다. */
-/* 예를 들어, 각 페이지 컴포넌트의 최상위 div에 flex-grow: 1; 을 추가할 수 있습니다. */
-/* 현재 OverallAdminDashboard.js의 .overall-admin-dashboard는 이미 min-height: 100vh; 와 display: flex; flex-direction: column; 이 설정되어 있습니다. */
-/* 따라서, 이 App.css 수정이 가장 중요합니다. */
+*/

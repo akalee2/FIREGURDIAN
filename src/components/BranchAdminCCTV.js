@@ -25,6 +25,7 @@ function BranchAdminCCTV({ onLoginClick, onNavigate }) {
   // 기간 필터 상태
   const [filterPeriod, setFilterPeriod] = useState('7days'); // 7일, 1달, 3달, 6달, 1년
 
+  
   return (
     <div className="branch-admin-cctv">
       {/* 상단 헤더 바 */}
