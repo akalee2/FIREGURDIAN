@@ -181,6 +181,7 @@
   width: 100%;
 }
 
+/* 수정 부분 시작 */
 .form-row {
   display: flex;
   align-items: center;
@@ -189,10 +190,16 @@
   color: #333;
 }
 
+/* 주소 관련 폼 로우를 위한 새로운 클래스 추가 */
+.form-row.address-group {
+  flex-direction: column; /* 주소 그룹은 수직 정렬 */
+  align-items: flex-start;
+}
+
 .form-row label {
   min-width: 220px; /* 라벨의 최소 너비 증가 (정렬을 위해) */
   font-weight: bold;
-  margin-right: 30px;
+  margin-right: 0px;
   text-align: left;
 }
 
@@ -210,6 +217,7 @@
   font-size: 22px;
   outline: none;
   transition: border-color 0.2s;
+  width: 100%; /* 기본적으로 100% 너비 차지 */
 }
 
 .input-field::placeholder {
@@ -220,14 +228,22 @@
   border-color: #007bff;
 }
 
+/* 아이디 필드는 원래대로 유지하려면 별도의 클래스를 주거나, 특정 ID를 사용해야 합니다.
+   여기서는 input-with-button 클래스를 사용하지 않는 input-field는 100% 너비를 유지합니다. */
+
+
 .input-with-button {
   display: flex;
   flex-grow: 1;
   gap: 15px;
+  width: 100%; /* 부모 너비에 맞춤 */
 }
 
-.input-with-button .input-field {
-  flex-grow: 1;
+/* 우편번호 검색 필드 너비 넓히기 */
+.input-with-button.postcode .input-field {
+  max-width: 300px; /* 우편번호 필드의 최대 너비 설정, 필요에 따라 조정 */
+  flex-grow: 0; /* 우편번호 필드는 고정 너비에 가깝게 */
+  flex-shrink: 0;
 }
 
 .action-button {
@@ -273,10 +289,25 @@
   font-weight: bold;
 }
 
+/* 상세 주소 입력 칸을 우편 번호 검색 필드 아래로 내리기 */
 .input-field.detail-address {
   margin-top: 15px;
-  margin-left: 250px; /* 라벨 너비 + 마진만큼 왼쪽으로 밀기 (min-width에 맞춰 조정) */
+  margin-left: 0; /* 기존의 라벨 너비만큼 밀던 마진 제거 */
+  width: 100%; /* 상세 주소 필드는 100% 너비 */
 }
+
+/* 주소 관련 폼 로우 내부의 input-field를 위한 스타일 */
+.form-row.address-group > .input-field {
+    width: 100%; /* 라벨 아래로 내려온 필드가 너비 100%를 차지하도록 */
+    margin-top: 15px; /* 라벨과의 간격 */
+}
+
+.form-row.address-group > .input-with-button {
+    width: 100%; /* 라벨 아래로 내려온 버튼과 입력 필드 그룹이 너비 100%를 차지하도록 */
+}
+
+/* 수정 부분 끝 */
+
 
 /* 사업장 추가 버튼 */
 .add-branch-button-container {
@@ -492,6 +523,7 @@
     font-size: 16px;
     min-width: unset;
   }
+  /* 상세 주소 입력 칸 조정 */
   .input-field.detail-address {
     margin-left: 0; /* 상세 주소 왼쪽 여백 해제 */
     margin-top: 10px;

@@ -1,5 +1,5 @@
 // src/components/SignupPageThreeBranch.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './SignupPageThreeBranch.css';
 import FireGuardianLogo from '../assets/대비로고.png'; // 기존 로고 이미지 재사용
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa'; // 아이콘 사용
@@ -10,16 +10,19 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [authCode, setAuthCode] = useState(''); // 인증 코드 상태 추가
   const [address, setAddress] = useState('');
   const [detailAddress, setDetailAddress] = useState('');
 
   // 유효성 검사 상태
   const [isIdAvailable, setIsIdAvailable] = useState(null); // null: 확인 전, true: 사용 가능, false: 사용 불가
   const [isPasswordMatched, setIsPasswordMatched] = useState(null); // null: 확인 전, true: 일치, false: 불일치
-  const [isPhoneVerified, setIsPhoneVerified] = useState(false); // 휴대폰 인증 여부
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false); // 휴대폰 인증 코드 발송 여부 (인증 완료는 아님)
+  const [isAuthCodeVerified, setIsAuthCodeVerified] = useState(false); // 인증 코드 확인 완료 여부
+  const [showAuthErrorModal, setShowAuthErrorModal] = useState(false); // 인증 오류 팝업 표시 여부
 
   // 비밀번호 확인 로직
-  React.useEffect(() => {
+  useEffect(() => {
     if (password && confirmPassword) {
       setIsPasswordMatched(password === confirmPassword);
     } else {
@@ -31,27 +34,40 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
     // 실제 아이디 중복 확인 API 호출 로직
     // 여기서는 간단히 예시로 구현합니다.
     if (id === 'testuser') {
+      // alert('이미 사용 중인 아이디입니다.'); // alert 대신 모달 또는 인라인 메시지 사용 권장
       setIsIdAvailable(false); // 이미 사용 중인 아이디
-      alert('이미 사용 중인 아이디입니다.');
     } else if (id.length < 8 || id.length > 16) {
+      // alert('아이디는 8~16자 이내의 영문/숫자/기호여야 합니다.'); // alert 대신 모달 또는 인라인 메시지 사용 권장
       setIsIdAvailable(false);
-      alert('아이디는 8~16자 이내의 영문/숫자/기호여야 합니다.');
     } else {
+      // alert('사용 가능한 아이디입니다.'); // alert 대신 모달 또는 인라인 메시지 사용 권장
       setIsIdAvailable(true); // 사용 가능한 아이디
-      alert('사용 가능한 아이디입니다.');
     }
   };
 
   const handlePhoneVerification = () => {
     // 실제 휴대폰 인증 로직 (SMS 발송 등)
-    alert('휴대폰 인증 코드를 발송했습니다. (실제 기능 아님)');
-    // 인증 성공 시 setIsPhoneVerified(true);
-    setIsPhoneVerified(true); // 임시로 바로 성공 처리
+    // alert('휴대폰 인증 코드를 발송했습니다. (실제 기능 아님)'); // alert 대신 모달 또는 인라인 메시지 사용 권장
+    setIsPhoneVerified(true); // 인증 코드 발송 상태로 변경
+    setIsAuthCodeVerified(false); // 인증 코드를 다시 받아야 하므로 초기화
+    setAuthCode(''); // 인증 코드 필드 초기화
+  };
+
+  const handleAuthCodeVerification = () => {
+    // 실제 인증 코드 확인 로직
+    if (authCode === '123456') { // 예시 인증 코드
+      // alert('인증 코드가 확인되었습니다.'); // alert 대신 모달 또는 인라인 메시지 사용 권장
+      setIsAuthCodeVerified(true);
+      setShowAuthErrorModal(false); // 오류 팝업 숨김
+    } else {
+      setIsAuthCodeVerified(false);
+      setShowAuthErrorModal(true); // 오류 팝업 표시
+    }
   };
 
   const handleAddressSearch = () => {
     // 실제 우편번호 검색 API 호출 로직
-    alert('우편번호 검색 팝업 (실제 기능 아님)');
+    // alert('우편번호 검색 팝업 (실제 기능 아님)'); // alert 대신 모달 또는 커스텀 UI 사용 권장
     // 검색 결과로 주소 설정
     setAddress('서울특별시 강남구 테헤란로 123'); // 예시 주소
   };
@@ -60,24 +76,28 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
     e.preventDefault();
 
     // 필수 입력 필드 및 유효성 검사 확인
-    if (!id || !password || !confirmPassword || !name || !phone || !address) {
-      alert('모든 필수 정보를 입력해주세요.');
+    if (!id || !password || !confirmPassword || !name || !phone || !authCode || !address) {
+      // alert('모든 필수 정보를 입력해주세요.'); // alert 대신 모달 또는 인라인 메시지 사용 권장
       return;
     }
     if (isIdAvailable !== true) {
-      alert('아이디 중복 확인을 완료하거나 사용 가능한 아이디를 입력해주세요.');
+      // alert('아이디 중복 확인을 완료하거나 사용 가능한 아이디를 입력해주세요.'); // alert 대신 모달 또는 인라인 메시지 사용 권장
       return;
     }
     if (isPasswordMatched !== true) {
-      alert('비밀번호가 일치하지 않습니다.');
+      // alert('비밀번호가 일치하지 않습니다.'); // alert 대신 모달 또는 인라인 메시지 사용 권장
       return;
     }
     if (!isPhoneVerified) {
-      alert('휴대폰 인증을 완료해주세요.');
+      // alert('휴대폰 인증 코드를 먼저 발송해주세요.'); // alert 대신 모달 또는 인라인 메시지 사용 권장
+      return;
+    }
+    if (!isAuthCodeVerified) {
+      // alert('인증 코드 확인을 완료해주세요.'); // alert 대신 모달 또는 인라인 메시지 사용 권장
       return;
     }
 
-    console.log('회원 정보:', { id, password, name, phone, address, detailAddress });
+    console.log('회원 정보:', { id, password, name, phone, authCode, address, detailAddress });
     onNextClick(); // 다음 페이지로 이동
   };
 
@@ -93,7 +113,7 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
         </button>
       </div>
 
-     {/* 메인 컨테이너 */}
+      {/* 메인 컨테이너 */}
       <div className="signup-main-container">
         <h1 className="signup-title">회원가입</h1>
 
@@ -105,7 +125,7 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
 
         {/* 진행 단계 표시 */}
         <div className="progress-steps">
-          <div className="progress-step active">
+          <div className="progress-step">
             <div className="progress-step-circle">
               <span className="step-number">01</span>
               <span className="step-text">회원유형선택</span>
@@ -119,7 +139,7 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
             </div>
           </div>
           <div className="progress-arrow"></div> {/* 화살표 */}
-          <div className="progress-step">
+          <div className="progress-step active">
             <div className="progress-step-circle">
               <span className="step-number">03</span>
               <span className="step-text">정보 입력</span>
@@ -227,11 +247,34 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
                   required
                 />
                 <button type="button" className="action-button" onClick={handlePhoneVerification}>
-                  인증
+                  인증번호 발송
                 </button>
               </div>
-              {isPhoneVerified && <span className="input-guide success-message"><FaCheckCircle className="success-icon" /> 인증 완료</span>}
+              {isPhoneVerified && <span className="input-guide success-message"><FaCheckCircle className="success-icon" /> 인증번호 발송 완료</span>}
             </div>
+
+            {/* 인증 코드 입력 필드 추가 */}
+            {isPhoneVerified && ( // 인증번호 발송 후 보이도록
+              <div className="form-row auth-code-row">
+                <label htmlFor="auth-code-input" className="required">인증번호</label>
+                <div className="input-with-button">
+                  <input
+                    type="text"
+                    id="auth-code-input"
+                    value={authCode}
+                    onChange={(e) => setAuthCode(e.target.value)}
+                    placeholder="인증번호 입력"
+                    className="input-field"
+                    required
+                  />
+                  <button type="button" className="action-button" onClick={handleAuthCodeVerification}>
+                    인증번호 확인
+                  </button>
+                </div>
+                {isAuthCodeVerified && <span className="input-guide success-message"><FaCheckCircle className="success-icon" /> 인증 완료</span>}
+                {/* 오류 메시지는 이제 팝업으로 표시되므로 인라인 메시지 제거 */}
+              </div>
+            )}
 
             {/* 사업장 주소 */}
             <div className="form-row">
@@ -251,15 +294,22 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
                   우편번호검색
                 </button>
               </div>
+            </div>
+
+            {/* 상세 주소 - 새로운 form-row로 분리 */}
+            <div className="form-row detail-address-row">
+              {/* 라벨 텍스트를 비워두고, CSS로 공간을 확보합니다. */}
+              <label htmlFor="detail-address-input"></label>
               <input
                 type="text"
                 id="detail-address-input"
                 value={detailAddress}
                 onChange={(e) => setDetailAddress(e.target.value)}
                 placeholder="상세 주소"
-                className="input-field detail-address"
+                className="input-field"
               />
             </div>
+
           </form>
         </div>
 
@@ -273,6 +323,17 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
           </button>
         </div>
       </div>
+
+      {/* 인증 오류 팝업 (모달) */}
+      {showAuthErrorModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2 className="modal-title">인증 오류</h2>
+            <p className="modal-message">인증 코드가 올바르지 않습니다. 다시 확인해주세요.</p>
+            <button className="modal-close-button" onClick={() => setShowAuthErrorModal(false)}>확인</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
