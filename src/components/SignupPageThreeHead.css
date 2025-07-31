@@ -291,8 +291,8 @@
 
 /* 상세 주소 입력 칸을 우편 번호 검색 필드 아래로 내리기 */
 .input-field.detail-address {
-  margin-top: 15px;
-  margin-left: 0; /* 기존의 라벨 너비만큼 밀던 마진 제거 */
+  margin-top: 0px;
+  margin-left: 10px; /* 기존의 라벨 너비만큼 밀던 마진 제거 */
   width: 100%; /* 상세 주소 필드는 100% 너비 */
 }
 
