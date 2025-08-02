@@ -1,0 +1,668 @@
+/* src/components/SignupPageThreeBranch.css */
+
+.signup-page-three-branch {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f8f8f8;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+}
+
+/* 상단 헤더 바 (SignupPageOne/Two와 동일하게 유지) */
+.signup-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 80px;
+    background-color: #2c3e50;
+    color: white;
+    height: 100px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.header-logo {
+    display: flex;
+    align-items: center;
+}
+
+.header-logo-img {
+    height: 50px;
+    width: auto;
+}
+
+.header-login-button {
+    background: none;
+    border: 2px solid white;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.header-login-button:hover {
+    background-color: white;
+    color: #2c3e50;
+    border-color: #2c3e50;
+}
+
+/* 메인 컨테이너 (SignupPageOne과 동일) */
+.signup-main-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 100px 50px; /* 높이 관련: 유지, 너비 관련: 유지 */
+    /* 폼 전체 너비 1.3배 확장 */
+    max-width: 2600px; /* 2000px * 1.3 = 2600px */
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* 회원가입 제목 (SignupPageOne과 동일) */
+.signup-title {
+    font-size: 78px; /* 유지 */
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 40px; /* 유지 */
+    width: 100%;
+    text-align: center;
+}
+
+
+/* Breadcrumbs / Navigation Path (SignupPageOne과 동일) */
+.breadcrumb-nav {
+    font-size: 28px; /* 유지 */
+    color: #777;
+    margin-top: -12px; /* 유지 */
+    margin-bottom: 90px; /* 유지 */
+    position: relative;
+    padding-bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+
+.breadcrumb-nav span {
+    margin: 0 5px;
+}
+
+.breadcrumb-nav span.active-breadcrumb {
+    color: #007bff;
+    font-weight: bold;
+}
+
+/* 진행 단계 표시 (SignupPageOne과 동일) */
+.progress-steps {
+    display: flex;
+    align-items: flex-start; /* 유지 */
+    justify-content: center;
+    gap: 60px; /* 유지 */
+    margin-bottom: 130px; /* 유지 */
+    width: 100%;
+}
+
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.progress-step-circle {
+    width: 280px; /* 유지 */
+    height: 280px; /* 유지 */
+    border-radius: 50%;
+    background-color: white;
+    border: 2px solid #ccc;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* 유지 */
+    align-items: center;
+    text-align: center;
+    padding-top: 40px; /* 유지 */
+    padding-bottom: 40px; /* 유지 */
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.progress-step.active .progress-step-circle {
+    background-color: #2c3e50;
+    border: none;
+}
+
+.progress-step-inner-circle {
+    width: 140px; /* 유지 */
+    height: 140px; /* 유지 */
+    border-radius: 50%;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px; /* 유지 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 유지 */
+}
+
+.progress-step-circle .step-number {
+    font-size: 65px; /* 유지 */
+    font-weight: bold;
+    color: #555; /* 유지 */
+}
+
+.progress-step.active .progress-step-inner-circle .step-number {
+    color: #333; /* 유지 */
+}
+
+.progress-step-circle .step-text {
+    font-size: 32px; /* 유지 */
+    font-weight: bold;
+    white-space: nowrap;
+    color: #555; /* 유지 */
+    margin-top: 15px; /* 유지 */
+}
+
+.progress-step.active .progress-step-circle .step-text {
+    color: white; /* 유지 */
+}
+
+.progress-arrow {
+    width: 80px; /* 유지 */
+    height: 4px; /* 유지 */
+    background-color: #ccc;
+    position: relative;
+    margin-top: 140px; /* 유지 */
+}
+
+.progress-arrow::after {
+    content: '';
+    position: absolute;
+    right: 0px; /* 유지 */
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 20px; /* 유지 */
+    height: 20px; /* 유지 */
+    border-top: 4px solid #ccc; /* 유지 */
+    border-right: 4px solid #ccc; /* 유지 */
+    background-color: transparent;
+}
+
+/* 회원 정보 입력 섹션 */
+.member-info-input-section {
+    width: 100%;
+    /* 폼 전체 너비 1.3배 확장 */
+    max-width: 1300px; /* 1000px * 1.3 = 1300px */
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    /* 높이 관련: 원래 값 유지 (50px), 너비 관련: 1.3배 확장 (70px -> 91px, 약 90px) */
+    padding: 50px 90px;
+    /* 높이 관련: 원래 값 유지 */
+    margin-bottom: 80px;
+}
+
+.section-title-with-circle {
+    font-size: 34px; /* 유지 */
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 30px; /* 유지 */
+}
+
+.section-title-with-circle::before {
+    content: '○ '; /* 유지 */
+    color: #007bff; /* 유지 */
+}
+
+.info-input-form {
+    width: 100%;
+}
+
+.form-row {
+    display: flex;
+    align-items: center; /* 유지 */
+    /* 높이 관련: 원래 값 유지 */
+    margin-bottom: 25px;
+    font-size: 22px; /* 유지 */
+    color: #333;
+}
+
+.form-row label {
+    /* 모든 필드의 시작 위치를 맞추기 위해 고정 width 사용 */
+    width: 230px; /* 180px * 1.3 = 234px (약 230px) - 이 너비로 모든 라벨 정렬 */
+    font-weight: bold;
+    margin-right: 0px; /* 0으로 유지 */
+    text-align: left; /* 유지 */
+}
+
+.form-row label.required::after {
+    content: ' *'; /* 유지 */
+    color: red;
+    margin-left: 5px;
+}
+
+.input-area-wrapper {
+    display: flex;
+    flex-grow: 1; /* 남은 공간을 모두 차지 */
+    align-items: center; /* 내부 요소 정렬 */
+    gap: 10px; /* 20px에서 10px로 줄임 */
+}
+
+.input-field {
+    flex-grow: 1; /* 남은 공간을 모두 차지하도록 */
+    padding: 18px 26px; /* 높이 관련: 원래 값 유지 (18px), 너비 관련: 1.3배 확장 (20px -> 26px) */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 22px; /* 유지 */
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input-field::placeholder {
+    color: #bbb;
+}
+
+.input-field:focus {
+    border-color: #007bff;
+}
+
+.input-with-button {
+    display: flex;
+    flex-grow: 1; /* input-area-wrapper 안에서 남은 공간을 차지 */
+    gap: 20px; 
+}
+
+.input-with-button .input-field {
+    flex-grow: 1; /* input-with-button 안에서 남은 공간을 차지 */
+    min-width: 340px; /* 520px에서 340px로 줄임 */
+}
+
+.action-button {
+    /* 높이 관련: 원래 값 유지 (15px), 너비 관련: 1.3배 확장 (25px -> 35px) */
+    padding: 15px 35px;
+    background-color: #e0e0e0;
+    color: #555;
+    border: none;
+    border-radius: 8px;
+    font-size: 20px; /* 유지 */
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    white-space: nowrap; /* 유지 */
+}
+
+.action-button:hover {
+    background-color: #ccc;
+}
+
+.input-guide {
+    font-size: 18px; /* 유지 */
+    color: #777;
+    /* input-area-wrapper 안에서 margin-left 제거 (gap이 처리) */
+    /* min-width를 조정하여 필드 시작점 미세 조정 */
+    min-width: 280px; /* 325px에서 280px로 줄여서 필드 시작점 당김 */
+    display: flex;
+    align-items: center;
+    flex-shrink: 0; /* 공간이 부족해도 줄어들지 않도록 */
+}
+
+.input-guide .success-icon {
+    color: #28a745; /* 유지 */
+    margin-right: 8px;
+    font-size: 20px;
+}
+
+.input-guide .error-icon {
+    color: #dc3545; /* 유지 */
+    margin-right: 8px;
+    font-size: 20px;
+}
+
+.input-guide.success-message {
+    color: #28a745; /* 유지 */
+    font-weight: bold;
+}
+
+/* 인증 코드 입력 필드를 위한 스타일 */
+.form-row.auth-code-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px; /* 다른 form-row와 일관된 하단 간격 */
+    margin-top: -2px; /* 휴대폰 필드와 간격 조절 */
+}
+
+.form-row.auth-code-row label {
+    /* 모든 필드의 시작 위치를 맞추기 위해 고정 width 사용 */
+    width: 230px; /* 다른 라벨과 동일한 너비로 설정 */
+    margin-right: 0px; /* 0으로 유지 */
+}
+
+/* 상세 주소 필드를 위한 새로운 form-row 스타일 */
+.form-row.detail-address-row {
+    margin-left:-10px;
+    margin-bottom: 25px; /* 다른 form-row와 일관된 하단 간격 */
+    margin-top: 0; /* 우편번호 필드 바로 아래에 오도록 불필요한 상단 마진 제거 */
+}
+
+.form-row.detail-address-row label {
+    /* 다른 라벨과 동일한 너비로 설정하여 공간을 확보 */
+    width: 230px;
+    /* 텍스트를 시각적으로 숨김 (접근성 유지) */
+    color: transparent;
+    font-size: 0;
+    line-height: 0;
+}
+
+.form-row.detail-address-row .input-field {
+    /* 남은 공간을 모두 차지하도록 */
+    flex-grow: 1;
+    width: auto; /* flex-grow가 있으므로 auto가 적절 */
+}
+
+/* 하단 버튼 섹션 (SignupPageOne/Two와 동일하게 유지) */
+.navigation-buttons {
+    display: flex;
+    justify-content: center;
+    /* 너비 관련: 1.3배 확장 */
+    gap: 40px; /* 30px * 1.3 = 39px (약 40px) */
+    width: 100%;
+    /* 높이 관련: 원래 값 유지 */
+    margin-top: 50px;
+}
+
+.nav-button {
+    /* 높이 관련: 원래 값 유지 (20px), 너비 관련: 1.3배 확장 (50px -> 65px) */
+    padding: 20px 65px;
+    border: none;
+    border-radius: 10px;
+    font-size: 26px; /* 유지 */
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    /* 너비 관련: 1.3배 확장 */
+    min-width: 260px; /* 200px * 1.3 = 260px */
+}
+
+.nav-button.prev-button {
+    background-color: #e0e0e0;
+    color: #555;
+}
+
+.nav-button.prev-button:hover {
+    background-color: #ccc;
+}
+
+.nav-button.next-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.nav-button.next-button:hover {
+    background-color: #0056b3;
+}
+
+
+/* 모달 오버레이 스타일 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* 반투명 검정 배경 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* 다른 요소 위에 표시 */
+}
+
+/* 모달 콘텐츠 스타일 */
+.modal-content {
+    background-color: white;
+    padding: 40px 50px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    animation: fadeInScale 0.3s ease-out forwards; /* 애니메이션 추가 */
+}
+
+.modal-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #dc3545; /* 오류 색상 */
+    margin-bottom: 20px;
+}
+
+.modal-message {
+    font-size: 22px;
+    color: #555;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+.modal-close-button {
+    background-color: #007bff;
+    color: white;
+    padding: 15px 35px;
+    border: none;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.modal-close-button:hover {
+    background-color: #0056b3;
+}
+
+/* 모달 애니메이션 */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
+/* 반응형 디자인 (기존 SignupPageOne/Two와 유사하게 조정) */
+@media (max-width: 1024px) {
+    .signup-header-bar {
+        padding: 20px 30px;
+        height: 70px;
+    }
+    .header-logo-img {
+        height: 35px;
+    }
+    .header-login-button {
+        padding: 10px 20px;
+        font-size: 16px;
+    }
+    .signup-main-container {
+        padding: 50px 20px;
+        max-width: 90%;
+    }
+    .signup-title {
+        font-size: 48px;
+    }
+
+    /* SignupPageThreeBranch 전용 반응형 조정 */
+    .member-info-input-section {
+        padding: 30px 40px;
+        max-width: 95%;
+    }
+    .section-title-with-circle {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    .form-row {
+        flex-direction: column; /* 작은 화면에서 라벨과 필드를 세로로 정렬 */
+        align-items: flex-start;
+        margin-bottom: 20px;
+        font-size: 20px;
+    }
+    .form-row label {
+        width: unset; /* 반응형에서는 고정 너비 해제 */
+        margin-right: 0;
+        margin-bottom: 10px; /* 라벨과 필드 사이 간격 */
+    }
+    .input-with-button {
+        flex-direction: column; /* 버튼이 있는 입력 필드도 세로 정렬 */
+        width: 100%;
+        gap: 10px;
+    }
+    .input-field {
+        font-size: 18px;
+        padding: 15px 20px;
+    }
+    .action-button {
+        width: 100%; /* 버튼 너비 100% */
+        font-size: 18px;
+        padding: 12px 20px;
+    }
+    .input-guide {
+        margin-left: 0;
+        margin-top: 10px;
+        font-size: 16px;
+        min-width: unset;
+    }
+
+    /* 인증 코드 필드 반응형 조정 */
+    .form-row.auth-code-row {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-top: 10px;
+    }
+    .form-row.auth-code-row label {
+        width: unset; /* 반응형에서는 고정 너비 해제 */
+        margin-bottom: 10px;
+    }
+
+    /* 상세 주소 필드 반응형 조정 */
+    .form-row.detail-address-row {
+        flex-direction: column; /* 작은 화면에서 세로 정렬 */
+        align-items: flex-start;
+        margin-top: 10px; /* 스택킹 시 상단 마진 추가 */
+    }
+    .form-row.detail-address-row label {
+        display: none; /* 작은 화면에서는 라벨을 완전히 숨김 */
+        width: unset; /* 반응형에서는 고정 너비 해제 */
+    }
+    .form-row.detail-address-row .input-field {
+        width: 100%;
+        max-width: none; /* 반응형에서 최대 너비 제한 해제 */
+    }
+
+    .navigation-buttons {
+        gap: 20px;
+    }
+    .nav-button {
+        padding: 15px 30px;
+        font-size: 20px;
+        min-width: 150px;
+    }
+
+    /* 모달 반응형 */
+    .modal-content {
+        padding: 30px 40px;
+    }
+    .modal-title {
+        font-size: 28px;
+    }
+    .modal-message {
+        font-size: 18px;
+    }
+    .modal-close-button {
+        padding: 12px 25px;
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 768px) {
+    .signup-header-bar {
+        padding: 15px 20px;
+        height: 60px;
+    }
+    .header-logo-img {
+        height: 30px;
+    }
+    .header-login-button {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+    .signup-title {
+        font-size: 38px;
+    }
+
+    /* SignupPageThreeBranch 전용 모바일 조정 */
+    .member-info-input-section {
+        padding: 25px 20px;
+    }
+    .section-title-with-circle {
+        font-size: 22px;
+    }
+    .form-row {
+        margin-bottom: 15px;
+        font-size: 18px;
+    }
+    .form-row label {
+        margin-bottom: 8px;
+    }
+    .input-field {
+        font-size: 16px;
+        padding: 12px 15px;
+    }
+    .action-button {
+        font-size: 16px;
+        padding: 10px 15px;
+    }
+    .input-guide {
+        font-size: 14px;
+        margin-top: 8px;
+    }
+
+    /* 인증 코드 필드 모바일 조정 */
+    .form-row.auth-code-row {
+        margin-top: 8px;
+    }
+
+    /* 상세 주소 필드 모바일 조정 */
+    .form-row.detail-address-row {
+        margin-top: 8px;
+    }
+
+    .navigation-buttons {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .nav-button {
+        padding: 12px 25px;
+        font-size: 18px;
+        min-width: unset;
+        width: 100%;
+    }
+
+    /* 모달 반응형 */
+    .modal-content {
+        padding: 25px 30px;
+    }
+    .modal-title {
+        font-size: 24px;
+    }
+    .modal-message {
+        font-size: 16px;
+    }
+    .modal-close-button {
+        padding: 10px 20px;
+        font-size: 16px;
+    }
+}

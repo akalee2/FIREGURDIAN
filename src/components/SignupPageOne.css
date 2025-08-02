@@ -1,0 +1,290 @@
+/* src/components/SignupPageOne.css */
+
+/* 전체 페이지의 기본 레이아웃 및 스타일을 정의합니다. */
+.signup-page-one {
+  display: flex; /* 자식 요소들을 유연하게 배치합니다 (column 방향으로). */
+  flex-direction: column; /* 자식 요소들을 세로 방향으로 정렬합니다. */
+  min-height: 100vh; /* 페이지의 최소 높이를 뷰포트(화면) 높이의 100%로 설정하여 화면 전체를 차지하게 합니다. */
+  background-color: #f8f8f8; /* 페이지의 배경색을 연한 회색으로 설정합니다. */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif; /* 페이지 전체에 적용될 기본 글꼴을 설정합니다. */
+}
+
+/* 상단 헤더 바 (로고와 로그인 버튼이 있는 검은색 바)의 스타일을 정의합니다. */
+.signup-header-bar {
+  display: flex; /* 자식 요소들을 유연하게 배치합니다. */
+  justify-content: space-between; /* 자식 요소(로고 영역, 로그인 버튼)를 양 끝으로 정렬하고 그 사이에 공간을 균등하게 분배합니다. */
+  align-items: center; /* 자식 요소들을 세로 중앙에 정렬합니다. */
+  padding: 30px 80px; /* 헤더 바의 상하 30px, 좌우 80px 내부 여백을 설정합니다. */
+  background-color: #2c3e50; /* 헤더 바의 배경색을 어두운 청회색으로 설정합니다. */
+  color: white; /* 헤더 바 내부 텍스트의 기본 색상을 흰색으로 설정합니다. */
+  height: 100px; /* 헤더 바의 고정 높이를 100px로 설정합니다. */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 헤더 바 아래에 그림자 효과를 추가합니다. */
+}
+
+/* 헤더 바의 왼쪽 영역 (로고)의 스타일을 정의합니다. */
+.header-left {
+  display: flex; /* 자식 요소들을 유연하게 배치합니다. */
+  align-items: center; /* 자식 요소들을 세로 중앙에 정렬합니다. */
+  gap: 50px; /* 자식 요소들 사이의 가로 간격을 50px로 설정합니다. */
+}
+
+/* 로고 이미지 컨테이너의 스타일을 정의합니다. */
+.header-logo {
+  cursor: pointer; /* 마우스 커서를 포인터 모양으로 변경하여 클릭 가능한 요소임을 나타냅니다. */
+}
+
+/* 로고 이미지 자체의 스타일을 정의합니다. */
+.header-logo-img {
+  height: 100px; /* 로고 이미지의 높이를 100px로 설정하여 헤더 바의 높이에 꽉 차게 합니다. */
+  width: auto; /* 로고 이미지의 너비를 자동으로 설정하여 원래의 가로세로 비율을 유지합니다. */
+}
+
+/* 헤더 바 내 로그인 버튼의 스타일을 정의합니다. */
+.header-login-button {
+  background: none; /* 버튼의 배경색을 없앱니다. */
+  border: 2px solid white; /* 버튼에 2px 두께의 흰색 테두리를 추가합니다. */
+  color: white; /* 버튼 텍스트 색상을 흰색으로 설정합니다. */
+  padding: 15px 30px; /* 버튼의 상하 15px, 좌우 30px 내부 여백을 설정합니다. */
+  border-radius: 8px; /* 버튼의 모서리를 둥글게 만듭니다. */
+  cursor: pointer; /* 마우스 커서를 포인터 모양으로 변경합니다. */
+  font-size: 20px; /* 버튼 텍스트의 글꼴 크기를 20px로 설정합니다. */
+  font-weight: bold; /* 버튼 텍스트를 굵게 만듭니다. */
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s; /* 배경색, 텍스트 색상, 테두리 색상 변경 시 0.2초 동안 부드럽게 전환되도록 애니메이션 효과를 추가합니다. */
+}
+
+/* 로그인 버튼에 마우스 오버 시 (hover) 스타일을 정의합니다. */
+.header-login-button:hover {
+  background-color: white; /* 마우스 오버 시 버튼 배경색을 흰색으로 변경합니다. */
+  color: #2c3e50; /* 마우스 오버 시 버튼 텍스트 색상을 어두운 청회색으로 변경합니다. */
+  border-color: #2c3e50; /* 마우스 오버 시 버튼 테두리 색상을 어두운 청회색으로 변경합니다. */
+}
+
+/* 메인 콘텐츠 영역 (헤더와 푸터 사이)의 스타일을 정의합니다. */
+.signup-main-container {
+  flex-grow: 1; /* 남은 수직 공간을 모두 차지하도록 설정합니다 (페이지 높이에 따라 확장). */
+  display: flex; /* 자식 요소들을 유연하게 배치합니다. */
+  flex-direction: column; /* 자식 요소들을 세로 방향으로 정렬합니다. */
+  align-items: center; /* 자식 요소들을 가로 중앙에 정렬합니다. */
+  padding: 100px 50px; /* 메인 컨테이너의 상하 80px->104px, 좌우 50px->65px 내부 여백을 설정합니다. */
+  max-width: 2000px; /* 메인 컨테이너의 최대 너비를 1400px->1820px로 제한합니다. */
+  margin: 0 auto; /* 메인 컨테이너를 가로 중앙에 배치합니다. */
+  width: 100%; /* 너비를 부모 요소의 100%로 설정합니다. */
+}
+
+/* 회원가입 제목 (가장 큰 '회원가입' 텍스트)의 스타일을 정의합니다. */
+.signup-title {
+  font-size: 78px; /* 글꼴 크기를 60px->78px로 증가 */
+  font-weight: bold; /* 글꼴을 굵게 만듭니다. */
+  color: #333; /* 글꼴 색상을 진한 회색으로 설정합니다. */
+  margin-bottom: 20px; /* 제목 아래에 60px->78px 외부 여백을 설정합니다. */
+  padding-bottom: 20px; /* 15px->20px */
+  width: 100%; /* 너비를 부모 요소의 100%로 설정합니다. */
+  text-align: center; /* 텍스트를 중앙 정렬합니다. */
+}
+
+
+/* Breadcrumbs (경로 표시, 예: Home / 회원가입) 영역의 스타일을 정의합니다. */
+.breadcrumb-nav {
+  font-size: 28px; /* 글꼴 크기를 22px->28px로 설정합니다. */
+  color: #777; /* 글꼴 색상을 회색으로 설정합니다. */
+  margin-top: -12px;
+  margin-bottom: 90px; /* Breadcrumbs 아래에 60px->78px 외부 여백을 설정합니다. */
+  position: relative; /* 자식 요소인 밑줄(.breadcrumb-line)의 위치 지정을 위해 상대 위치로 설정합니다. */
+  padding-bottom: 0; /* 밑줄을 없애므로 패딩도 0으로 설정합니다. */
+  width: 100%; /* 너비를 부모 요소의 100%로 설정합니다. */
+  text-align: center; /* 텍스트를 중앙 정렬합니다. */
+}
+
+/* 브레드크럼 밑 줄 스타일 */
+.breadcrumb-divider {
+  border-bottom: 4px solid #eee; /* 회색 줄 */
+  margin-top: 20px; /* 텍스트와 줄 사이 간격 */
+  margin-bottom: 32px; /* 줄과 아래 내용 사이 간격 */
+  width: 100%;
+}
+
+
+/* Breadcrumbs 내의 각 텍스트 요소(span)의 스타일을 정의합니다. */
+.breadcrumb-nav span {
+  margin: 0 5px; /* 각 텍스트 요소의 좌우에 5px 외부 여백을 설정합니다. */
+}
+
+/* Breadcrumbs 내 활성화된 경로 텍스트의 스타일을 정의합니다. */
+.breadcrumb-nav span.active-breadcrumb {
+  color: #007bff; /* 활성 텍스트 색상을 파란색으로 설정합니다. */
+  font-weight: bold; /* 활성 텍스트를 굵게 만듭니다. */
+}
+
+
+/* 회원가입 진행 단계 컨테이너 (원형 단계 표시와 화살표 포함)의 스타일을 정의합니다. */
+.progress-steps {
+  display: flex; /* 자식 요소들을 유연하게 배치합니다. */
+  align-items: center; /* 자식 요소들을 세로 중앙에 정렬합니다. */
+  justify-content: center; /* 자식 요소들을 가로 중앙에 정렬합니다. */
+  gap: 52px; /* 각 단계(원형)와 화살표 사이의 간격을 40px->52px로 증가 */
+  margin-bottom: 130px; /* 카드와의 간격을 100px->130px로 증가 */
+  width: 100%; /* 너비를 부모 요소의 100%로 설정합니다. */
+}
+
+/* 각 진행 단계 요소 (원형과 텍스트)의 스타일을 정의합니다. */
+.progress-step {
+  display: flex; /* 자식 요소들을 유연하게 배치합니다. */
+  flex-direction: column; /* 자식 요소들을 세로 방향으로 정렬합니다. */
+  align-items: center; /* 자식 요소들을 가로 중앙에 정렬합니다. */
+  position: relative; /* 자식 요소의 위치 지정을 위해 상대 위치로 설정합니다. */
+}
+
+/* 진행 단계의 원형 요소 (숫자와 텍스트 포함)의 스타일을 정의합니다. */
+.progress-step-circle {
+  width: 325px; /* 원의 너비를 250px->325px로 증가 */
+  height: 325px; /* 원의 높이를 250px->325px로 증가 */
+  border-radius: 50%; /* 테두리 반경을 50%로 설정하여 완벽한 원 형태로 만듭니다. */
+
+  border: 2px solid #ccc; /* 비활성 상태일 때 원에 2px 두께의 회색 테두리를 추가합니다. */
+  display: flex; /* 내부 숫자 및 텍스트를 유연하게 배치합니다. */
+  flex-direction: column; /* 내부 숫자와 텍스트를 세로 방향으로 정렬합니다. */
+  justify-content: center; /* 내부 숫자와 텍스트를 세로 중앙에 정렬합니다. */
+  align-items: center; /* 내부 숫자와 텍스트를 가로 중앙에 정렬합니다. */
+  text-align: center; /* 내부 텍스트를 중앙 정렬합니다. */
+  padding: 13px; /* 원 내부의 콘텐츠와 테두리 사이의 여백을 10px->13px로 설정합니다. */
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* 배경색, 텍스트 색상, 테두리 색상 변경 시 0.3초 동안 부드럽게 전환되도록 애니메이션 효과를 추가합니다. */
+  box-sizing: border-box; /* 패딩이 요소의 최종 너비/높이에 포함되도록 계산 방식을 변경합니다. */
+}
+
+/* 활성화된 진행 단계 원형의 스타일을 정의합니다. */
+.progress-step.active .progress-step-circle {
+  background-color: #2c3e50; /* 활성 상태일 때 원의 배경색을 어두운 청회색으로 설정합니다. */
+  color: white; /* 활성 상태일 때 원 내부 텍스트 색상을 흰색으로 설정합니다. */
+  border: none; /* 활성 상태일 때 테두리를 없앱니다. */
+}
+
+.progress-step.active .step-number {
+  font-size: 58px; /* 숫자 폰트 크기를 45px->58px로 증가 */
+  font-weight: bold; /* 숫자를 굵게 만듭니다. */
+  color:#ffffff;
+  margin-bottom: 10px; /* 숫자와 텍스트 사이 간격을 8px->10px로 증가 */
+  border: none; 
+}
+
+/* 진행 단계 원형 내부의 숫자 텍스트의 스타일을 정의합니다. */
+.progress-step-circle .step-number {
+  font-size: 58px; /* 숫자 폰트 크기를 45px->58px로 증가 */
+  font-weight: bold; /* 숫자를 굵게 만듭니다. */
+  margin-bottom: 10px; /* 숫자와 텍스트 사이 간격을 8px->10px로 증가 */
+  border: none;
+  background-color: transparent;
+}
+
+/* 진행 단계 원형 내부의 설명 텍스트의 스타일을 정의합니다. */
+.progress-step-circle .step-text {
+  font-size: 36px; /* 텍스트 폰트 크기를 28px->36px로 증가 */
+  font-weight: bold; /* 텍스트를 굵게 만듭니다. */
+  white-space: nowrap; /* 텍스트가 줄바꿈되지 않고 한 줄로 표시되도록 합니다. */
+}
+
+/* 진행 단계 사이의 화살표 바의 스타일을 정의합니다. */
+.progress-arrow {
+  height: 1px; /* 화살표 바의 두께를 3px->4px로 설정합니다. */
+  background-color: #efefef; /* 화살표 바의 배경색을 회색으로 설정합니다. */
+  position: relative; /* 화살표 머리(.progress-arrow::after)의 위치 지정을 위해 상대 위치로 설정합니다. */
+}
+
+/* 화살표 바 끝의 화살표 머리 모양의 스타일을 정의합니다. */
+.progress-arrow::after {
+  content: ''; /* 가상 요소로 내용을 비워둡니다 (순수하게 스타일링 목적으로 사용). */
+  position: absolute; /* 부모 요소(.progress-arrow)를 기준으로 절대 위치를 설정합니다. */
+  right: 0px; /* 화살표 바의 오른쪽 끝에서 0px 떨어진 곳에 위치시킵니다. */
+  top: 50%; /* 부모 요소의 세로 중앙에 위치시킵니다. */
+  transform: translateY(-50%) rotate(45deg); /* 세로 중앙 정렬 후 45도 회전하여 화살표 모양을 만듭니다. */
+  width: 20px; /* 화살표 머리의 너비를 15px->20px로 증가 */
+  height: 20px; /* 화살표 머리의 높이를 15px->20px로 증가 */
+  border-top: 4px solid #ccc; /* 위쪽 테두리를 3px->4px 두께의 회색으로 설정합니다. */
+  border-right: 4px solid #ccc; /* 오른쪽 테두리를 3px->4px 두께의 회색으로 설정합니다. */
+  background-color: transparent; /* 배경색을 투명하게 설정합니다. */
+}
+
+
+/* 총괄관리자 / 지점관리자 선택 카드들을 담는 컨테이너의 스타일을 정의합니다. */
+.signup-cards-container {
+  display: flex; /* 자식 요소들을 유연하게 배치합니다. */
+  justify-content: center; /* 자식 요소들을 가로 중앙에 정렬합니다. */
+  gap: 65px; /* 카드들 사이의 가로 간격을 50px->65px로 증가 */
+  width: 100%; /* 너비를 부모 요소의 100%로 설정합니다. */
+  margin-bottom: 120px; /* 하단 안내 문구와의 간격을 100px->130px로 증가 */
+}
+
+/* 각 선택 카드 (총괄관리자, 지점관리자)의 스타일을 정의합니다. */
+.signup-card {
+  background-color: white; /* 카드의 배경색을 흰색으로 설정합니다. */
+  border: 1px solid #ddd; /* 카드에 1px 두께의 연한 회색 테두리를 추가합니다. */
+  border-radius: 15px; /* 카드의 모서리를 15px 둥글게 만듭니다. */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); /* 카드 아래에 그림자 효과를 추가합니다. */
+  padding: 50px; 
+  width: 60%; /* 두 카드가 나란히 오도록 너비 조절 */
+  display: flex; /* 내부 요소들을 유연하게 배치합니다. */
+  flex-direction: column; /* 내부 요소들을 세로 방향으로 정렬합니다. */
+  align-items: flex-start; /* 내부 요소들을 가로 시작점(왼쪽)에 정렬합니다. */
+  cursor: pointer; /* 마우스 커서를 포인터 모양으로 변경합니다. */
+  transition: transform 0.2s, box-shadow 0.2s; /* 변형 및 그림자 변경 시 0.2초 동안 부드럽게 전환되도록 애니메이션 효과를 추가합니다. */
+}
+
+/* 카드에 마우스 오버 시 (hover) 스타일을 정의합니다. */
+.signup-card:hover {
+  transform: translateY(-5px); /* 마우스 오버 시 카드를 위로 5px 이동시킵니다. */
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12); /* 마우스 오버 시 그림자를 더 진하게 만듭니다. */
+}
+
+/* 카드 내 제목 (총괄관리자, 지점관리자)의 스타일을 정의합니다. */
+.card-title {
+  font-size: 58px; /* 글꼴 크기를 45px->58px로 증가 */
+  font-weight: bold; /* 글꼴을 굵게 만듭니다. */
+  color: #333; /* 글꼴 색상을 진한 회색으로 설정합니다. */
+  margin-bottom: 20px; /* 제목 아래에 15px->20px 외부 여백을 설정합니다. */
+}
+
+/* 카드 내 설명 텍스트의 스타일을 정의합니다. */
+.card-description {
+  font-size: 28px; /* 글꼴 크기를 22px->28px로 증가 */
+  color: #666; /* 글꼴 색상을 회색으로 설정합니다. */
+  line-height: 1.6; /* 줄 간격을 글꼴 크기의 1.6배로 설정하여 가독성을 높입니다. */
+  margin-bottom: 52px; /* 버튼과의 간격을 40px->52px로 증가 */
+  flex-grow: 1; /* 남은 수직 공간을 채우도록 설정하여 버튼이 항상 하단에 위치하도록 돕습니다. */
+}
+
+/* 카드 내 "회원가입 >" 버튼의 스타일을 정의합니다. */
+.signup-card-button {
+  background: none; /* 배경색 없음 */
+  border: none; /* 테두리 없음 */
+  color: #007bff; /* 텍스트 색상 (피그마 디자인) */
+  padding: 0; /* 패딩 제거 */
+  font-size: 31px; /* 글꼴 크기를 24px->31px로 증가 */
+  font-weight: bold; /* 글꼴을 굵게 만듭니다. */
+  cursor: pointer; /* 마우스 커서를 포인터 모양으로 변경합니다. */
+  transition: color 0.2s; /* 텍스트 색상 변경 시 0.2초 동안 부드럽게 전환되도록 애니메이션 효과를 추가합니다. */
+  display: flex; /* 내부 요소들을 유연하게 배치합니다. */
+  align-items: center; /* 내부 요소들을 세로 중앙에 정렬합니다. */
+  gap: 10px; /* 화살표와의 간격을 8px->10px로 증가 */
+  margin-top: auto; /* 남은 수직 공간을 자동으로 채워 버튼이 카드 하단에 붙도록 합니다. */
+}
+
+/* 카드 버튼에 마우스 오버 시 (hover) 스타일을 정의합니다. */
+.signup-card-button:hover {
+  color: #0056b3; /* 마우스 오버 시 버튼 텍스트 색상을 더 진한 파란색으로 변경합니다. */
+  text-decoration: underline; /* 마우스 오버 시 텍스트에 밑줄을 추가합니다. */
+}
+
+/* 카드 버튼 내 화살표 아이콘의 스타일을 정의합니다. */
+.signup-card-button .arrow-icon {
+  font-size: 23px; /* 화살표 아이콘의 글꼴 크기를 18px->23px로 증가 */
+}
+
+/* 하단 안내 문구의 스타일을 정의합니다. */
+.bottom-info-text {
+  font-size: 30px; /* 글꼴 크기를 28px->36px로 증가 */
+  color: #777; /* 글꼴 색상을 회색으로 설정합니다. */
+  text-align: center; /* 텍스트를 중앙 정렬합니다. */
+  line-height: 1.5; /* 줄 간격을 글꼴 크기의 1.5배로 설정하여 가독성을 높입니다. */
+  margin-top: 0px; /* 안내 문구 위에 30px->40px 외부 여백을 설정합니다. */
+}

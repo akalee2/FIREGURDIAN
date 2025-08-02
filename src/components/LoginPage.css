@@ -1,0 +1,152 @@
+/* src/components/LoginPage.css */
+
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* 전체 뷰포트 높이 */
+  background-color: #FDFAF8; /* 배경색 */
+  width: 100%; 
+}
+
+.login-container {
+  background-color: #ffffff;
+  padding: 120px; 
+  border-radius: 20px; 
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); 
+  width: 100%;
+  max-width: 1200px; 
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+}
+
+/* 로고 섹션 */
+.logo-section {
+  margin-bottom: 70px; 
+  text-align: center;
+  width: 100%;
+}
+
+.logo-section .logo {
+  max-width: 900px; 
+  width: 47%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+
+/* 폼 섹션 */
+.login-form {
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.input-group {
+  margin-bottom: 20px; /* 25px에서 35px로 증가 */
+  position: relative;
+}
+
+.input-field {
+  width: 100%;
+  padding: 30px 35px; 
+  border: 3px solid #ddd;
+  border-radius: 10px; 
+  font-size: 34px; /* 24px에서 30px로 증가 */
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-field::placeholder {
+  color: #999;
+}
+
+.input-field:focus {
+  border-color: #4a90e2;
+}
+
+.password-group .input-field {
+  padding-right: 70px; /* 60px에서 70px로 증가 */
+}
+
+.password-toggle-icon {
+  position: absolute;
+  right: 30px; 
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #777;
+  font-size: 38px; 
+}
+
+.login-button {
+  width: 100%;
+  padding: 28px; 
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 10px; 
+  font-size: 36px; 
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.login-button:hover {
+  background-color: #0056b3;
+}
+
+/* 옵션 섹션 (아이디 저장, 아이디/비밀번호 찾기) */
+.options-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 50px; 
+  font-size: 24px; 
+  color: #666;
+}
+
+.remember-id {
+  display: flex;
+  align-items: center;
+}
+
+.remember-id input[type="checkbox"] {
+  margin-right: 15px; 
+  width: 24px; 
+  height: 24px; 
+  accent-color: #007bff;
+}
+
+.find-links a {
+  color: #666;
+  text-decoration: none;
+  margin: 0 12px; 
+}
+
+.find-links a:hover {
+  text-decoration: underline;
+  color: #007bff;
+}
+
+/* 회원가입 섹션 */
+.signup-section {
+  width: 100%;
+  text-align: center;
+  font-size: 28px; 
+  color: #555;
+  padding-top: 40px; 
+  border-top: 2px solid #eee;
+}
+
+.signup-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.signup-link:hover {
+  text-decoration: underline;
+}
