@@ -3,10 +3,11 @@ import React, { useState, useEffect } from 'react';
 import './SignupPageThreeHead.css';
 import FireGuardianLogo from '../assets/대비로고.png';
 import { FaCheckCircle, FaTimesCircle, FaPlusCircle, FaTimes } from 'react-icons/fa';
-import { initializeApp } from "firebase/app"; // SMS 인증 모듈 1
-import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth"; // SMS 인증 모듈 1
+import { initializeApp } from "firebase/app";
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import axios from 'axios';
 
-// Firebase configuration, SMS 인증 설정 정보, 보안 이슈로 .env 파일에 감추어 놓음
+// Firebase configuration
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -21,9 +22,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+// API 기본 URL 설정
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
+
 function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
   // 로딩 상태 추가
   const [isLoading, setIsLoading] = useState(false);
+  const [isCheckingId, setIsCheckingId] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 개인 정보 상태
   const [id, setId] = useState('');
@@ -90,6 +96,37 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
     return () => document.body.removeChild(script);
   }, []);
 
+  // 아이디 중복 확인 API 호출
+  const handleIdCheck = async () => {
+    if (!id || id.trim().length < 3) {
+      alert('아이디를 3자 이상 입력해주세요.');
+      return;
+    }
+
+    setIsCheckingId(true);
+    try {
+      const response = await axios.post(`${API_BASE_URL}/signup/check-username`, {
+        username: id
+      });
+
+      const { available, message } = response.data;
+      setIsIdAvailable(available);
+
+      if (available) {
+        alert('사용 가능한 아이디입니다.');
+      } else {
+        alert('이미 존재하는 아이디입니다.');
+      }
+    } catch (error) {
+      console.error('아이디 중복 확인 오류:', error);
+      const errorMessage = error.response?.data?.message || '아이디 중복 확인 중 오류가 발생했습니다.';
+      alert(errorMessage);
+      setIsIdAvailable(false);
+    } finally {
+      setIsCheckingId(false);
+    }
+  };
+
   // 에러 메시지 처리 함수
   const getErrorMessage = (errorCode) => {
     const errorMessages = {
@@ -114,27 +151,20 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
   // reCAPTCHA 설정 함수
   const setupRecaptcha = async () => {
     try {
-      // 기존 reCAPTCHA 정리
       if (window.recaptchaVerifier) {
         await window.recaptchaVerifier.clear();
         window.recaptchaVerifier = null;
       }
 
-
-      // 이전 reCAPTCHA 컨테이너 제거
       const oldContainer = document.getElementById('recaptcha-container');
       if (oldContainer) {
         oldContainer.remove();
       }
 
-
-      // 새로운 reCAPTCHA 컨테이너 생성
       const newContainer = document.createElement('div');
       newContainer.id = 'recaptcha-container';
       document.body.appendChild(newContainer);
 
-
-      // 새로운 reCAPTCHA 인스턴스 생성
       window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
         size: 'invisible',
         callback: () => {
@@ -145,8 +175,6 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
         }
       });
 
-
-      // reCAPTCHA 렌더링
       await window.recaptchaVerifier.render();
       return window.recaptchaVerifier;
     } catch (error) {
@@ -183,39 +211,21 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
     }
   };
 
-
-  const handleIdCheck = () => {
-    if (id === 'adminuser') {
-      setIsIdAvailable(false);
-      alert('이미 사용 중인 아이디입니다.');
-    } else if (id.length < 8 || id.length > 16) {
-      setIsIdAvailable(false);
-      alert('아이디는 8~16자 이내의 영문/숫자/기호여야 합니다.');
-    } else {
-      setIsIdAvailable(true);
-      alert('사용 가능한 아이디입니다.');
-    }
-  };
-
   // 인증 번호 발송 함수
   const handlePhoneVerification = async (type = 'admin') => {
-    // 동시 요청 방지
     if (isLoading) return;
     setIsLoading(true);
 
     try {
       const verification = type === 'admin' ? adminVerification : managerVerification;
 
-      // 이미 인증이 완료된 경우 체크
       if (verification.isVerified) {
         alert('이미 인증이 완료되었습니다.');
         return;
       }
 
-      // 이전 인증 시도 초기화
       resetVerificationState(type);
 
-      // 전화번호 유효성 검사 (개선된 정규식)
       const targetPhone = verification.phone;
       const phoneRegex = /^(\+82)?0?(10|11|16|17|18|19)[0-9]{7,8}$/;
 
@@ -224,19 +234,14 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
         return;
       }
 
-      // reCAPTCHA 설정
       const verifier = await setupRecaptcha();
       if (!verifier) {
         throw new Error('reCAPTCHA 설정 실패');
       }
 
-      // 전화번호 포맷팅
       const formattedPhone = formatPhoneNumber(targetPhone);
-
-      // 인증 번호 발송
       const confirmation = await signInWithPhoneNumber(auth, formattedPhone, window.recaptchaVerifier);
 
-      // 상태 업데이트
       if (type === 'admin') {
         setAdminVerification(prev => ({
           ...prev,
@@ -258,50 +263,39 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
     }
     catch (error) {
       console.error('SMS 전송 실패:', error);
-
-      // 에러 시 상태 초기화
       resetVerificationState(type);
-
       alert(`인증번호 전송 실패: ${getErrorMessage(error.code)}`);
-
     } finally {
-      // reCAPTCHA 정리 및 로딩 상태 해제
       cleanupRecaptcha();
       setIsLoading(false);
     }
   };
 
   const handleVerifyPhoneCode = async (type = 'admin') => {
-    // 동시 요청 방지
     if (isLoading) return;
     setIsLoading(true);
 
     try {
       const verification = type === 'admin' ? adminVerification : managerVerification;
 
-      // 이미 인증이 완료된 경우
       if (verification.isVerified) {
         alert('이미 인증이 완료되었습니다.');
         return;
       }
 
-      // 인증번호 발송 여부 확인
       if (!verification.confirmationResult) {
         alert('먼저 인증번호를 발송해주세요.');
         return;
       }
 
-      // 인증 코드 유효성 검사 (중복 제거)
       const verificationCode = verification.code;
       if (!verificationCode || verificationCode.length !== 6 || !/^\d{6}$/.test(verificationCode)) {
         alert('6자리 숫자로 된 인증번호를 입력해주세요.');
         return;
       }
 
-      // 인증 코드 확인
       await verification.confirmationResult.confirm(verificationCode);
 
-      // 성공 시 상태 업데이트 (React 방식)
       if (type === 'admin') {
         setAdminVerification(prev => ({
           ...prev,
@@ -322,7 +316,6 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
     catch (error) {
       console.error('인증 실패:', error);
 
-      // 실패 시 상태 업데이트
       if (type === 'admin') {
         setAdminVerification(prev => ({
           ...prev,
@@ -343,7 +336,6 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
     }
   };
 
-
   const handleAddressSearch = (type) => {
     if (!isPostcodeLoaded || !window.daum || !window.daum.Postcode) {
       alert('주소 검색 서비스를 로드 중입니다. 잠시 후 다시 시도해주세요.');
@@ -352,19 +344,15 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
 
     new window.daum.Postcode({
       oncomplete: (data) => {
-        // 도로명 주소가 선택되었을 때
         if (type === 'headOffice') {
-          // 본사 주소 설정
           setHeadOfficeAddress(data.roadAddress);
           setHeadOfficeDetailAddress('');
         } else if (type === 'branch') {
-          // 사업장 주소 설정
           setBranchAddress(data.roadAddress);
           setBranchDetailAddress('');
         }
       },
       onclose: (state) => {
-        // 팝업이 닫혔을 때의 처리
         if (state === 'FORCE_CLOSE') {
           alert('주소 검색이 취소되었습니다.');
         }
@@ -408,40 +396,75 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
     });
   };
 
-
   const handleRemoveBranch = (index) => {
     setRegisteredBranches(registeredBranches.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e) => {
+  // 회원가입 API 호출
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // 입력값 검증
     if (!id || !password || !confirmPassword || !name || !adminVerification.phone || !headOfficeName || !headOfficeAddress) {
       alert('모든 필수 정보를 입력해주세요.');
       return;
     }
+
     if (isIdAvailable !== true || isPasswordMatched !== true || !adminVerification.isVerified) {
       alert('입력 정보를 다시 확인해주세요.');
       return;
     }
+
     if (registeredBranches.length === 0) {
       alert('최소 한 개 이상의 사업장 정보를 등록해주세요.');
       return;
     }
 
-    console.log('통합 관리자 회원 정보:', {
-      id,
-      password,
-      name,
-      phone: adminVerification.phone,
-      headOfficeName,
-      headOfficeAddress,
-      headOfficeDetailAddress,
-      registeredBranches,
-    });
-    onNextClick();
-  };
+    setIsSubmitting(true);
 
+    try {
+      // 회원가입 요청 데이터 구성
+      const signupData = {
+        username: id,
+        password: password,
+        name: name,
+        phoneNumber: adminVerification.phone,
+        userType: 'head_manager', // 총괄 관리자
+        headquartersName: headOfficeName,
+        headquartersAddress: headOfficeDetailAddress ? `${headOfficeAddress} ${headOfficeDetailAddress}` : headOfficeAddress,
+        branches: registeredBranches.map(branch => ({
+          branchName: branch.name,
+          managerName: branch.manager,
+          managerPhoneNumber: branch.phone,
+          branchAddress: branch.address
+        }))
+      };
+
+      console.log('회원가입 요청 데이터:', signupData);
+
+      // 백엔드 회원가입 API 호출
+      const response = await axios.post(`${API_BASE_URL}/signup/register`, signupData);
+
+      const { success, message, username, userType } = response.data;
+
+      if (success) {
+        alert(`회원가입이 완료되었습니다!\n${message}`);
+        console.log('회원가입 성공:', { username, userType });
+
+        // 성공 시 다음 단계로 이동
+        onNextClick();
+      } else {
+        alert(`회원가입 실패: ${message}`);
+      }
+
+    } catch (error) {
+      console.error('회원가입 오류:', error);
+      const errorMessage = error.response?.data?.message || '회원가입 중 오류가 발생했습니다.';
+      alert(`회원가입 실패: ${errorMessage}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="signup-page-three-head">
@@ -509,13 +532,22 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                   type="text"
                   id="id-input"
                   value={id}
-                  onChange={(e) => setId(e.target.value)}
+                  onChange={(e) => {
+                    setId(e.target.value);
+                    setIsIdAvailable(null); // 아이디 변경 시 중복 확인 상태 초기화
+                  }}
                   placeholder="아이디 입력"
                   className="input-field"
                   required
+                  disabled={isSubmitting}
                 />
-                <button type="button" className="action-button" onClick={handleIdCheck}>
-                  아이디중복확인
+                <button
+                  type="button"
+                  className="action-button"
+                  onClick={handleIdCheck}
+                  disabled={isCheckingId || isSubmitting}
+                >
+                  {isCheckingId ? '확인중...' : '아이디중복확인'}
                 </button>
               </div>
               <span className="input-guide">
@@ -536,6 +568,7 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                 placeholder="비밀번호 입력"
                 className="input-field"
                 required
+                disabled={isSubmitting}
               />
               <span className="input-guide">(8~16 이내의 영문/숫자/기호 사용 가능)</span>
             </div>
@@ -551,6 +584,7 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                 placeholder="비밀번호 재입력"
                 className="input-field"
                 required
+                disabled={isSubmitting}
               />
               <span className="input-guide">
                 {isPasswordMatched === true && <FaCheckCircle className="success-icon" />}
@@ -571,6 +605,7 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                 placeholder="이름 입력"
                 className="input-field"
                 required
+                disabled={isSubmitting}
               />
               <span className="input-guide">반드시 실명으로 입력해주세요.</span>
             </div>
@@ -589,14 +624,14 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                   }))}
                   placeholder="ex. 01012345678"
                   className="input-field"
-                  disabled={adminVerification.isDisabled}
+                  disabled={adminVerification.isDisabled || isSubmitting}
                   required
                 />
                 <button
                   type="button"
                   className="action-button"
                   onClick={() => handlePhoneVerification('admin')}
-                  disabled={isLoading || adminVerification.isDisabled}
+                  disabled={isLoading || adminVerification.isDisabled || isSubmitting}
                 >
                   {isLoading ? '발송 중...' : '인증번호 발송'}
                 </button>
@@ -618,14 +653,14 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                     }))}
                     placeholder="인증 코드 입력"
                     className="input-field"
-                    disabled={adminVerification.isDisabled}
+                    disabled={adminVerification.isDisabled || isSubmitting}
                     maxLength="6"
                   />
                   <button
                     type="button"
                     className="action-button"
                     onClick={() => handleVerifyPhoneCode('admin')}
-                    disabled={isLoading || adminVerification.isDisabled}
+                    disabled={isLoading || adminVerification.isDisabled || isSubmitting}
                   >
                     {isLoading ? '확인 중...' : '확인'}
                   </button>
@@ -633,7 +668,7 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
               </div>
             )}
 
-            {/* 인증 완료 메시지 (조건부 렌더링 개선) */}
+            {/* 인증 완료 메시지 */}
             {adminVerification.isVerified && (
               <div className="form-row">
                 <span className="input-guide success-message">
@@ -641,7 +676,6 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                 </span>
               </div>
             )}
-
 
             {/* 본사 기본 정보 입력 */}
             <div className="section-title-with-circle second-section-title">본사 기본 정보 입력</div>
@@ -657,6 +691,7 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                 placeholder="본사명 입력"
                 className="input-field"
                 required
+                disabled={isSubmitting}
               />
             </div>
 
@@ -673,8 +708,14 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                   className="input-field"
                   readOnly
                   required
+                  disabled={isSubmitting}
                 />
-                <button type="button" className="action-button" onClick={() => handleAddressSearch('headOffice')}>
+                <button
+                  type="button"
+                  className="action-button"
+                  onClick={() => handleAddressSearch('headOffice')}
+                  disabled={isSubmitting}
+                >
                   우편번호검색
                 </button>
               </div>
@@ -685,6 +726,7 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                 onChange={(e) => setHeadOfficeDetailAddress(e.target.value)}
                 placeholder="상세 주소"
                 className="input-field detail-address"
+                disabled={isSubmitting}
               />
             </div>
 
@@ -702,6 +744,7 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                 placeholder="사업장명 입력"
                 className="input-field"
                 required
+                disabled={isSubmitting}
               />
             </div>
 
@@ -718,8 +761,14 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                   className="input-field"
                   readOnly
                   required
+                  disabled={isSubmitting}
                 />
-                <button type="button" className="action-button" onClick={() => handleAddressSearch('branch')}>
+                <button
+                  type="button"
+                  className="action-button"
+                  onClick={() => handleAddressSearch('branch')}
+                  disabled={isSubmitting}
+                >
                   우편번호검색
                 </button>
               </div>
@@ -730,6 +779,7 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                 onChange={(e) => setBranchDetailAddress(e.target.value)}
                 placeholder="상세 주소"
                 className="input-field detail-address"
+                disabled={isSubmitting}
               />
             </div>
 
@@ -744,6 +794,7 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                 placeholder="담당자명 입력"
                 className="input-field"
                 required
+                disabled={isSubmitting}
               />
             </div>
 
@@ -761,14 +812,14 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                   }))}
                   placeholder="ex. 01012345678"
                   className="input-field"
-                  disabled={managerVerification.isDisabled}
+                  disabled={managerVerification.isDisabled || isSubmitting}
                   required
                 />
                 <button
                   type="button"
                   className="action-button"
                   onClick={() => handlePhoneVerification('manager')}
-                  disabled={isLoading || managerVerification.isDisabled}
+                  disabled={isLoading || managerVerification.isDisabled || isSubmitting}
                 >
                   {isLoading ? '발송 중...' : '인증번호 발송'}
                 </button>
@@ -790,14 +841,14 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                     }))}
                     placeholder="인증 코드 입력"
                     className="input-field"
-                    disabled={managerVerification.isDisabled}
+                    disabled={managerVerification.isDisabled || isSubmitting}
                     maxLength="6"
                   />
                   <button
                     type="button"
                     className="action-button"
                     onClick={() => handleVerifyPhoneCode('manager')}
-                    disabled={isLoading || managerVerification.isDisabled}
+                    disabled={isLoading || managerVerification.isDisabled || isSubmitting}
                   >
                     {isLoading ? '확인 중...' : '확인'}
                   </button>
@@ -805,7 +856,7 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
               </div>
             )}
 
-            {/* 인증 완료 메시지 (조건부 렌더링 개선) */}
+            {/* 인증 완료 메시지 */}
             {managerVerification.isVerified && (
               <div className="form-row">
                 <span className="input-guide success-message">
@@ -814,9 +865,13 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
               </div>
             )}
 
-
             <div className="add-branch-button-container">
-              <button type="button" className="add-branch-button" onClick={handleAddBranch}>
+              <button
+                type="button"
+                className="add-branch-button"
+                onClick={handleAddBranch}
+                disabled={isSubmitting}
+              >
                 추가 <FaPlusCircle />
               </button>
             </div>
@@ -843,7 +898,12 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                         <td>{branch.manager}</td>
                         <td>{branch.phone}</td>
                         <td>
-                          <button type="button" className="remove-branch-button" onClick={() => handleRemoveBranch(index)}>
+                          <button
+                            type="button"
+                            className="remove-branch-button"
+                            onClick={() => handleRemoveBranch(index)}
+                            disabled={isSubmitting}
+                          >
                             <FaTimes />
                           </button>
                         </td>
@@ -860,7 +920,11 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
 
         {/* 하단 버튼 섹션 */}
         <div className="navigation-buttons">
-          <button className="nav-button prev-button" onClick={onPrevClick}>
+          <button
+            className="nav-button prev-button"
+            onClick={onPrevClick}
+            disabled={isSubmitting}
+          >
             이전
           </button>
           <button
@@ -873,9 +937,9 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
               }
               handleSubmit(e);
             }}
-            disabled={isLoading}
+            disabled={isLoading || isSubmitting}
           >
-            {isLoading ? '처리 중...' : '다음'}
+            {isSubmitting ? '처리 중...' : '다음'}
           </button>
         </div>
       </div>

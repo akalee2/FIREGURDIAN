@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import './SignupPageThreeBranch.css';
 import FireGuardianLogo from '../assets/대비로고.png';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
-import { initializeApp } from "firebase/app"; // SMS 인증 모듈 1
-import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth"; // SMS 인증 모듈 1
+import { initializeApp } from "firebase/app";
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import axios from 'axios';
 
-// Firebase configuration, SMS 인증 설정 정보, 보안 이슈로 .env 파일에 감추어 놓음
+// Firebase configuration
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -20,6 +21,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+// API 기본 URL 설정
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
+
 function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
@@ -32,11 +36,13 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
   const [confirmationResult, setConfirmationResult] = useState(null);
   const [firebaseUid, setFirebaseUid] = useState('');
   const [isPostcodeLoaded, setIsPostcodeLoaded] = useState(false);
-  const [isIdAvailable] = useState(null);
+  const [isIdAvailable, setIsIdAvailable] = useState(null);
   const [isPasswordMatched, setIsPasswordMatched] = useState(null);
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
   const [isAuthCodeVerified, setIsAuthCodeVerified] = useState(false);
   const [showAuthErrorModal, setShowAuthErrorModal] = useState(false);
+  const [isCheckingId, setIsCheckingId] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Password confirmation logic
   useEffect(() => {
@@ -58,20 +64,48 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
     return () => document.body.removeChild(script);
   }, []);
 
+  // 아이디 중복 확인 API 호출
+  const handleIdCheck = async () => {
+    if (!id || id.trim().length < 3) {
+      alert('아이디를 3자 이상 입력해주세요.');
+      return;
+    }
+
+    setIsCheckingId(true);
+    try {
+      const response = await axios.post(`${API_BASE_URL}/signup/check-username`, {
+        username: id
+      });
+
+      const { available, message } = response.data;
+      setIsIdAvailable(available);
+      
+      if (available) {
+        alert('사용 가능한 아이디입니다.');
+      } else {
+        alert('이미 존재하는 아이디입니다.');
+      }
+    } catch (error) {
+      console.error('아이디 중복 확인 오류:', error);
+      const errorMessage = error.response?.data?.message || '아이디 중복 확인 중 오류가 발생했습니다.';
+      alert(errorMessage);
+      setIsIdAvailable(false);
+    } finally {
+      setIsCheckingId(false);
+    }
+  };
+
   // reCAPTCHA 설정 함수
   const setupRecaptcha = async () => {
     try {
-      // 기존 reCAPTCHA 정리
       if (window.recaptchaVerifier) {
         await window.recaptchaVerifier.clear();
         window.recaptchaVerifier = null;
       }
 
-      // reCAPTCHA 컨테이너 생성
       const phoneInput = document.getElementById('phone-input');
       if (!phoneInput) return;
 
-      // 새로운 reCAPTCHA 설정
       window.recaptchaVerifier = new RecaptchaVerifier(auth, phoneInput, {
         size: 'invisible',
         callback: () => {
@@ -93,18 +127,15 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
 
   // 인증 번호 발송 함수
   const handlePhoneVerification = async () => {
-    // 이미 인증이 완료된 경우
     if (isAuthCodeVerified) {
       alert('이미 인증이 완료되었습니다.');
       return;
     }
 
-    // 연속 클릭 방지
     const button = document.getElementById('phone-verification-button');
     if (button) button.disabled = true;
 
     try {
-      // 전화번호 유효성 검사
       const phoneRegex = /^(\+82)?0?1[0-9]{8,9}$/;
       if (!phoneRegex.test(phone)) {
         alert('올바른 전화번호 형식을 입력해주세요 (예: 01012345678).');
@@ -112,16 +143,13 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
         return;
       }
 
-      // reCAPTCHA 설정
       await setupRecaptcha();
 
-      // 전화번호 포맷팅
       let formattedPhone = phone.replace(/[\s-]/g, '');
       if (!formattedPhone.startsWith('+82')) {
         formattedPhone = `+82${formattedPhone.replace(/^0/, '')}`;
       }
 
-      // 인증 번호 발송
       const confirmation = await signInWithPhoneNumber(auth, formattedPhone, window.recaptchaVerifier);
       setConfirmationResult(confirmation);
       setIsPhoneVerified(true);
@@ -130,7 +158,7 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
       setShowAuthErrorModal(false);
       alert('인증번호가 전송되었습니다!');
     } catch (error) {
-      console.error('SMS 전송 실패:', error); // 디버깅
+      console.error('SMS 전송 실패:', error);
       setIsPhoneVerified(false);
       setShowAuthErrorModal(true);
       alert(`인증번호 전송 실패: ${error.code === 'auth/too-many-requests' ? '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.' : '오류가 발생했습니다.'}`);
@@ -143,25 +171,21 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
 
   // 인증 코드 확인 함수
   const handleAuthCodeVerification = async () => {
-    // 이미 인증이 완료된 경우 처리
     if (isAuthCodeVerified) {
       alert('이미 인증이 완료되었습니다.');
       return;
     }
 
-    // 인증번호 발송 여부 확인
     if (!confirmationResult) {
       alert('먼저 인증번호를 발송해주세요.');
       return;
     }
 
-    // 인증 코드 유효성 검사
     if (!authCode || authCode.length !== 6) {
       alert('6자리 인증 코드를 입력해주세요.');
       return;
     }
 
-    // 연속 클릭 방지
     const verifyButton = document.querySelector('button[onClick="handleAuthCodeVerification"]');
     if (verifyButton) verifyButton.disabled = true;
 
@@ -171,7 +195,6 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
       setFirebaseUid(result.user.uid);
       setShowAuthErrorModal(false);
       
-      // 인증 성공 시 관련 필드들 비활성화
       const phoneInput = document.getElementById('phone-input');
       const authCodeInput = document.getElementById('auth-code-input');
       const verifyButton = document.getElementById('phone-verification-button');
@@ -202,38 +225,73 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
     }).open();
   };
 
-  const handleSubmit = (e) => {
+  // 회원가입 API 호출
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // 입력값 검증
     if (!id || !password || !confirmPassword || !name || !phone || !authCode || !address) {
       alert('모든 필수 정보를 입력해주세요.');
       return;
     }
+    
     if (isIdAvailable !== true) {
       alert('아이디 중복 확인을 완료하거나 사용 가능한 아이디를 입력해주세요.');
       return;
     }
+    
     if (isPasswordMatched !== true) {
       alert('비밀번호가 일치하지 않습니다.');
       return;
     }
+    
     if (!isPhoneVerified) {
       alert('휴대폰 인증 코드를 먼저 발송해주세요.');
       return;
     }
+    
     if (!isAuthCodeVerified) {
       alert('인증 코드 확인을 완료해주세요.');
       return;
     }
-    console.log('회원 정보:', { id, password, name, phone, authCode, address, detailAddress, firebaseUid });
-    onNextClick();
-  };
 
-  // [참고] handleIdCheck 함수는 제공되지 않았으므로 주석으로 처리
-  const handleIdCheck = () => {
-    // TODO: 서버에 ID 중복 확인 요청 로직 추가
-    // 예: fetch('/api/check-id', { method: 'POST', body: JSON.stringify({ id }) })
-    // 응답에 따라 setIsIdAvailable(true/false) 설정
-    alert('아이디 중복 확인 기능은 구현되지 않았습니다.');
+    setIsSubmitting(true);
+    
+    try {
+      // 회원가입 요청 데이터 구성
+      const signupData = {
+        username: id,
+        password: password,
+        name: name,
+        phoneNumber: phone,
+        userType: 'branch_manager', // 지점 담당자
+        officeAddress: detailAddress ? `${address} ${detailAddress}` : address
+      };
+
+      console.log('회원가입 요청 데이터:', signupData);
+
+      // 백엔드 회원가입 API 호출
+      const response = await axios.post(`${API_BASE_URL}/signup/register`, signupData);
+      
+      const { success, message, username, userType } = response.data;
+      
+      if (success) {
+        alert(`회원가입이 완료되었습니다!\n${message}`);
+        console.log('회원가입 성공:', { username, userType });
+        
+        // 성공 시 다음 단계로 이동
+        onNextClick();
+      } else {
+        alert(`회원가입 실패: ${message}`);
+      }
+      
+    } catch (error) {
+      console.error('회원가입 오류:', error);
+      const errorMessage = error.response?.data?.message || '회원가입 중 오류가 발생했습니다.';
+      alert(`회원가입 실패: ${errorMessage}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -268,8 +326,27 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
             <div className="form-row">
               <label htmlFor="id-input" className="required">아이디</label>
               <div className="input-with-button">
-                <input type="text" id="id-input" value={id} onChange={(e) => setId(e.target.value)} placeholder="아이디 입력" className="input-field" required />
-                <button type="button" className="action-button" onClick={handleIdCheck}>아이디중복확인</button>
+                <input 
+                  type="text" 
+                  id="id-input" 
+                  value={id} 
+                  onChange={(e) => {
+                    setId(e.target.value);
+                    setIsIdAvailable(null); // 아이디 변경 시 중복 확인 상태 초기화
+                  }} 
+                  placeholder="아이디 입력" 
+                  className="input-field" 
+                  required 
+                  disabled={isSubmitting}
+                />
+                <button 
+                  type="button" 
+                  className="action-button" 
+                  onClick={handleIdCheck}
+                  disabled={isCheckingId || isSubmitting}
+                >
+                  {isCheckingId ? '확인중...' : '아이디중복확인'}
+                </button>
               </div>
               <span className="input-guide">
                 {isIdAvailable === true && <FaCheckCircle className="success-icon" />}
@@ -280,13 +357,31 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
 
             <div className="form-row">
               <label htmlFor="password-input" className="required">비밀번호</label>
-              <input type="password" id="password-input" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="비밀번호 입력" className="input-field" required />
+              <input 
+                type="password" 
+                id="password-input" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                placeholder="비밀번호 입력" 
+                className="input-field" 
+                required 
+                disabled={isSubmitting}
+              />
               <span className="input-guide">(8~16 이내의 영문/숫자/기호 사용 가능)</span>
             </div>
 
             <div className="form-row">
               <label htmlFor="confirm-password-input" className="required">비밀번호 확인</label>
-              <input type="password" id="confirm-password-input" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="비밀번호 재입력" className="input-field" required />
+              <input 
+                type="password" 
+                id="confirm-password-input" 
+                value={confirmPassword} 
+                onChange={(e) => setConfirmPassword(e.target.value)} 
+                placeholder="비밀번호 재입력" 
+                className="input-field" 
+                required 
+                disabled={isSubmitting}
+              />
               <span className="input-guide">
                 {isPasswordMatched === true && <FaCheckCircle className="success-icon" />}
                 {isPasswordMatched === false && <FaTimesCircle className="error-icon" />}
@@ -297,7 +392,16 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
 
             <div className="form-row">
               <label htmlFor="name-input" className="required">이름</label>
-              <input type="text" id="name-input" value={name} onChange={(e) => setName(e.target.value)} placeholder="이름 입력" className="input-field" required />
+              <input 
+                type="text" 
+                id="name-input" 
+                value={name} 
+                onChange={(e) => setName(e.target.value)} 
+                placeholder="이름 입력" 
+                className="input-field" 
+                required 
+                disabled={isSubmitting}
+              />
               <span className="input-guide">반드시 실명으로 입력해주세요.</span>
             </div>
 
@@ -312,14 +416,14 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
                   placeholder="ex. +821012345678"
                   className="input-field"
                   required
-                  disabled={isAuthCodeVerified}
+                  disabled={isAuthCodeVerified || isSubmitting}
                 />
                 <button
                   type="button"
                   id="phone-verification-button"
                   className="action-button"
                   onClick={handlePhoneVerification}
-                  disabled={isAuthCodeVerified}
+                  disabled={isAuthCodeVerified || isSubmitting}
                 >
                   {isAuthCodeVerified ? '인증완료' : '인증번호 발송'}
                 </button>
@@ -339,13 +443,13 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
                     placeholder="인증번호 입력"
                     className="input-field"
                     required
-                    disabled={isAuthCodeVerified}
+                    disabled={isAuthCodeVerified || isSubmitting}
                   />
                   <button
                     type="button"
                     className="action-button"
                     onClick={handleAuthCodeVerification}
-                    disabled={isAuthCodeVerified}
+                    disabled={isAuthCodeVerified || isSubmitting}
                   >
                     {isAuthCodeVerified ? '인증완료' : '인증번호 확인'}
                   </button>
@@ -357,21 +461,58 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
             <div className="form-row">
               <label htmlFor="address-input" className="required">사업장 주소</label>
               <div className="input-with-button">
-                <input type="text" id="address-input" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="주소 검색" className="input-field" readOnly required />
-                <button type="button" className="action-button" onClick={handleAddressSearch}>우편번호검색</button>
+                <input 
+                  type="text" 
+                  id="address-input" 
+                  value={address} 
+                  onChange={(e) => setAddress(e.target.value)} 
+                  placeholder="주소 검색" 
+                  className="input-field" 
+                  readOnly 
+                  required 
+                  disabled={isSubmitting}
+                />
+                <button 
+                  type="button" 
+                  className="action-button" 
+                  onClick={handleAddressSearch}
+                  disabled={isSubmitting}
+                >
+                  우편번호검색
+                </button>
               </div>
             </div>
 
             <div className="form-row detail-address-row">
               <label htmlFor="detail-address-input"></label>
-              <input type="text" id="detail-address-input" value={detailAddress} onChange={(e) => setDetailAddress(e.target.value)} placeholder="상세 주소" className="input-field" />
+              <input 
+                type="text" 
+                id="detail-address-input" 
+                value={detailAddress} 
+                onChange={(e) => setDetailAddress(e.target.value)} 
+                placeholder="상세 주소" 
+                className="input-field" 
+                disabled={isSubmitting}
+              />
             </div>
           </form>
         </div>
 
         <div className="navigation-buttons">
-          <button className="nav-button prev-button" onClick={onPrevClick}>이전</button>
-          <button className="nav-button next-button" onClick={handleSubmit}>다음</button>
+          <button 
+            className="nav-button prev-button" 
+            onClick={onPrevClick}
+            disabled={isSubmitting}
+          >
+            이전
+          </button>
+          <button 
+            className="nav-button next-button" 
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? '처리중...' : '다음'}
+          </button>
         </div>
       </div>
 
