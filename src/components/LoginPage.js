@@ -3,40 +3,86 @@ import React, { useState } from 'react';
 import './LoginPage.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import FireGuardianLogo from '../assets/로고.png';
+import axios from 'axios';
 
-// onLoginSuccess prop을 받도록 수정 (userType을 인자로 전달할 수 있도록)
 function LoginPage({ onSignupClick, onLoginSuccess }) { 
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberId, setRememberId] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('ID:', id);
-    console.log('Password:', password);
-    console.log('Remember ID:', rememberId);
-    
-    // ******* --- 임시 로그인 인증 로직 시작 --- *******
-    if (id === '1234' && password === '1234') {
-      alert('총괄관리자 로그인 성공!');
-      if (onLoginSuccess) {
-        onLoginSuccess('head'); // 총괄관리자 유형으로 로그인 성공 전달
+    setLoading(true);
+    setError('');
+
+    try {
+      // 백엔드 로그인 API 호출
+      const response = await axios.post('http://localhost:8080/api/auth/login', {
+        username: id,
+        password: password
+      });
+
+      const { success, message, token, username, userType, name } = response.data;
+
+      if (success) {
+        // 로그인 성공 처리
+        console.log('로그인 성공:', message);
+        
+        // 토큰과 사용자 정보 저장
+        localStorage.setItem('token', token);
+        localStorage.setItem('userInfo', JSON.stringify({
+          username,
+          userType,
+          name
+        }));
+
+        // 아이디 저장 처리
+        if (rememberId) {
+          localStorage.setItem('rememberedId', id);
+        } else {
+          localStorage.removeItem('rememberedId');
+        }
+
+        // 성공 메시지 표시
+        alert(`${message}\n사용자: ${name} (${userType === 'head_manager' ? '총괄관리자' : '지점관리자'})`);
+
+        // 부모 컴포넌트에 로그인 성공 알림
+        if (onLoginSuccess) {
+          // userType을 'head' 또는 'branch'로 변환
+          const loginType = userType === 'head_manager' ? 'head' : 'branch';
+          onLoginSuccess(loginType);
+        }
+      } else {
+        setError(message);
+        alert(`로그인 실패: ${message}`);
       }
-    } else if (id === '456' && password === '456') {
-      alert('지점관리자 로그인 성공!');
-      if (onLoginSuccess) {
-        onLoginSuccess('branch'); // 지점관리자 유형으로 로그인 성공 전달
-      }
-    } else {
-      alert('로그인 실패: 아이디 또는 비밀번호를 확인해주세요.');
+
+    } catch (error) {
+      // 에러 처리
+      const errorMessage = error.response?.data?.message || '로그인 중 오류가 발생했습니다.';
+      setError(errorMessage);
+      alert(`로그인 실패: ${errorMessage}`);
+      console.error('로그인 오류:', error);
+    } finally {
+      setLoading(false);
     }
-    // --- 임시 로그인 인증 로직 끝 ---
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  // 컴포넌트 마운트 시 저장된 아이디 불러오기
+  React.useEffect(() => {
+    const rememberedId = localStorage.getItem('rememberedId');
+    if (rememberedId) {
+      setId(rememberedId);
+      setRememberId(true);
+    }
+  }, []);
 
   return (
     <div className="login-page">
@@ -54,6 +100,7 @@ function LoginPage({ onSignupClick, onLoginSuccess }) {
               onChange={(e) => setId(e.target.value)}
               className="input-field"
               required
+              disabled={loading}
             />
           </div>
           <div className="input-group password-group">
@@ -64,14 +111,25 @@ function LoginPage({ onSignupClick, onLoginSuccess }) {
               onChange={(e) => setPassword(e.target.value)}
               className="input-field"
               required
+              disabled={loading}
             />
             <span className="password-toggle-icon" onClick={togglePasswordVisibility}>
               {showPassword ? <FaEye /> : <FaEyeSlash />}
             </span>
           </div>
 
-          <button type="submit" className="login-button">
-            로그인
+          {error && (
+            <div className="error-message" style={{ color: 'red', fontSize: '14px', marginBottom: '10px' }}>
+              {error}
+            </div>
+          )}
+
+          <button 
+            type="submit" 
+            className="login-button"
+            disabled={loading}
+          >
+            {loading ? '로그인 중...' : '로그인'}
           </button>
         </form>
 
@@ -82,6 +140,7 @@ function LoginPage({ onSignupClick, onLoginSuccess }) {
               id="rememberId"
               checked={rememberId}
               onChange={(e) => setRememberId(e.target.checked)}
+              disabled={loading}
             />
             <label htmlFor="rememberId">아이디 저장</label>
           </div>
