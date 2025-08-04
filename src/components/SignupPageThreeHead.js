@@ -3,14 +3,54 @@ import React, { useState, useEffect } from 'react';
 import './SignupPageThreeHead.css';
 import FireGuardianLogo from '../assets/대비로고.png';
 import { FaCheckCircle, FaTimesCircle, FaPlusCircle, FaTimes } from 'react-icons/fa';
+import { initializeApp } from "firebase/app"; // SMS 인증 모듈 1
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth"; // SMS 인증 모듈 1
+
+// Firebase configuration, SMS 인증 설정 정보, 보안 이슈로 .env 파일에 감추어 놓음
+const firebaseConfig = {
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
+};
+
+// Firebase 초기화
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
 function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
+  // 로딩 상태 추가
+  const [isLoading, setIsLoading] = useState(false);
+
   // 개인 정보 상태
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
+
+  // 관리자 인증 상태 (객체로 그룹화)
+  const [adminVerification, setAdminVerification] = useState({
+    phone: '',
+    code: '',
+    isVerified: false,
+    confirmationResult: null,
+    isDisabled: false
+  });
+
+  // 담당자 인증 상태 (객체로 그룹화)
+  const [managerVerification, setManagerVerification] = useState({
+    phone: '',
+    code: '',
+    isVerified: false,
+    confirmationResult: null,
+    isDisabled: false
+  });
+
+  // 기타 상태들
+  const [isPostcodeLoaded, setIsPostcodeLoaded] = useState(false);
 
   // 본사 정보 상태
   const [headOfficeName, setHeadOfficeName] = useState('');
@@ -22,7 +62,6 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
   const [branchAddress, setBranchAddress] = useState('');
   const [branchDetailAddress, setBranchDetailAddress] = useState('');
   const [branchManagerName, setBranchManagerName] = useState('');
-  const [branchManagerPhone, setBranchManagerPhone] = useState('');
 
   // 등록된 사업장 목록
   const [registeredBranches, setRegisteredBranches] = useState([]);
@@ -30,16 +69,6 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
   // 유효성 검사 상태
   const [isIdAvailable, setIsIdAvailable] = useState(null);
   const [isPasswordMatched, setIsPasswordMatched] = useState(null);
-
-  // 개인 휴대폰 인증 상태
-  const [phoneVerificationSent, setPhoneVerificationSent] = useState(false);
-  const [phoneCode, setPhoneCode] = useState('');
-  const [isPhoneCodeVerified, setIsPhoneCodeVerified] = useState(false);
-
-  // 담당자 휴대폰 인증 상태
-  const [branchManagerPhoneVerificationSent, setBranchManagerPhoneVerificationSent] = useState(false);
-  const [branchManagerPhoneCode, setBranchManagerPhoneCode] = useState('');
-  const [isBranchManagerPhoneCodeVerified, setIsBranchManagerPhoneCodeVerified] = useState(false);
 
   // 비밀번호 확인 로직
   useEffect(() => {
@@ -49,6 +78,111 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
       setIsPasswordMatched(null);
     }
   }, [password, confirmPassword]);
+
+  // 카카오 우편번호 js 파일 불러오기
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+    script.async = true;
+    script.onload = () => setIsPostcodeLoaded(true);
+    script.onerror = () => setIsPostcodeLoaded(false);
+    document.body.appendChild(script);
+    return () => document.body.removeChild(script);
+  }, []);
+
+  // 에러 메시지 처리 함수
+  const getErrorMessage = (errorCode) => {
+    const errorMessages = {
+      'auth/too-many-requests': '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.',
+      'auth/invalid-phone-number': '잘못된 전화번호 형식입니다.',
+      'auth/quota-exceeded': '일일 SMS 할당량을 초과했습니다.',
+      'auth/captcha-check-failed': 'reCAPTCHA 인증에 실패했습니다.',
+      'auth/invalid-verification-code': '인증번호가 올바르지 않습니다.'
+    };
+    return errorMessages[errorCode] || '인증 과정에서 오류가 발생했습니다.';
+  };
+
+  // 전화번호 포맷팅 함수
+  const formatPhoneNumber = (phoneNumber) => {
+    let formatted = phoneNumber.replace(/[\s-]/g, '');
+    if (!formatted.startsWith('+82')) {
+      formatted = `+82${formatted.replace(/^0/, '')}`;
+    }
+    return formatted;
+  };
+
+  // reCAPTCHA 설정 함수
+  const setupRecaptcha = async () => {
+    try {
+      // 기존 reCAPTCHA 정리
+      if (window.recaptchaVerifier) {
+        await window.recaptchaVerifier.clear();
+        window.recaptchaVerifier = null;
+      }
+
+
+      // 이전 reCAPTCHA 컨테이너 제거
+      const oldContainer = document.getElementById('recaptcha-container');
+      if (oldContainer) {
+        oldContainer.remove();
+      }
+
+
+      // 새로운 reCAPTCHA 컨테이너 생성
+      const newContainer = document.createElement('div');
+      newContainer.id = 'recaptcha-container';
+      document.body.appendChild(newContainer);
+
+
+      // 새로운 reCAPTCHA 인스턴스 생성
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        size: 'invisible',
+        callback: () => {
+          console.log('reCAPTCHA verified');
+        },
+        'expired-callback': () => {
+          window.recaptchaVerifier = null;
+        }
+      });
+
+
+      // reCAPTCHA 렌더링
+      await window.recaptchaVerifier.render();
+      return window.recaptchaVerifier;
+    } catch (error) {
+      console.error('reCAPTCHA 설정 오류:', error);
+      throw error;
+    }
+  };
+
+  // 인증 상태 초기화 함수
+  const resetVerificationState = (type) => {
+    if (type === 'admin') {
+      setAdminVerification(prev => ({
+        ...prev,
+        confirmationResult: null,
+        code: '',
+        isVerified: false
+      }));
+    }
+    else {
+      setManagerVerification(prev => ({
+        ...prev,
+        confirmationResult: null,
+        code: '',
+        isVerified: false
+      }));
+    }
+  };
+
+  // reCAPTCHA 정리 함수
+  const cleanupRecaptcha = () => {
+    if (window.recaptchaVerifier) {
+      window.recaptchaVerifier.clear();
+      window.recaptchaVerifier = null;
+    }
+  };
+
 
   const handleIdCheck = () => {
     if (id === 'adminuser') {
@@ -63,63 +197,187 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
     }
   };
 
-  const handlePhoneVerification = () => {
-    if (!phone) {
-      alert('휴대폰 번호를 입력해주세요.');
-      return;
+  // 인증 번호 발송 함수
+  const handlePhoneVerification = async (type = 'admin') => {
+    // 동시 요청 방지
+    if (isLoading) return;
+    setIsLoading(true);
+
+    try {
+      const verification = type === 'admin' ? adminVerification : managerVerification;
+
+      // 이미 인증이 완료된 경우 체크
+      if (verification.isVerified) {
+        alert('이미 인증이 완료되었습니다.');
+        return;
+      }
+
+      // 이전 인증 시도 초기화
+      resetVerificationState(type);
+
+      // 전화번호 유효성 검사 (개선된 정규식)
+      const targetPhone = verification.phone;
+      const phoneRegex = /^(\+82)?0?(10|11|16|17|18|19)[0-9]{7,8}$/;
+
+      if (!phoneRegex.test(targetPhone)) {
+        alert('올바른 전화번호 형식을 입력해주세요 (예: 01012345678).');
+        return;
+      }
+
+      // reCAPTCHA 설정
+      const verifier = await setupRecaptcha();
+      if (!verifier) {
+        throw new Error('reCAPTCHA 설정 실패');
+      }
+
+      // 전화번호 포맷팅
+      const formattedPhone = formatPhoneNumber(targetPhone);
+
+      // 인증 번호 발송
+      const confirmation = await signInWithPhoneNumber(auth, formattedPhone, window.recaptchaVerifier);
+
+      // 상태 업데이트
+      if (type === 'admin') {
+        setAdminVerification(prev => ({
+          ...prev,
+          confirmationResult: confirmation,
+          code: '',
+          isVerified: false
+        }));
+      }
+      else {
+        setManagerVerification(prev => ({
+          ...prev,
+          confirmationResult: confirmation,
+          code: '',
+          isVerified: false
+        }));
+      }
+
+      alert('인증번호가 전송되었습니다!');
     }
-    alert('휴대폰 인증 코드를 발송했습니다. (실제 기능 아님)');
-    setPhoneVerificationSent(true);
-    setIsPhoneCodeVerified(false);
+    catch (error) {
+      console.error('SMS 전송 실패:', error);
+
+      // 에러 시 상태 초기화
+      resetVerificationState(type);
+
+      alert(`인증번호 전송 실패: ${getErrorMessage(error.code)}`);
+
+    } finally {
+      // reCAPTCHA 정리 및 로딩 상태 해제
+      cleanupRecaptcha();
+      setIsLoading(false);
+    }
   };
 
-  const handleVerifyPhoneCode = () => {
-    if (phoneCode === '1234') { // 예시 코드
-      setIsPhoneCodeVerified(true);
-      alert('휴대폰 인증이 완료되었습니다.');
-    } else {
-      setIsPhoneCodeVerified(false);
-      alert('인증 코드가 올바르지 않습니다.');
+  const handleVerifyPhoneCode = async (type = 'admin') => {
+    // 동시 요청 방지
+    if (isLoading) return;
+    setIsLoading(true);
+
+    try {
+      const verification = type === 'admin' ? adminVerification : managerVerification;
+
+      // 이미 인증이 완료된 경우
+      if (verification.isVerified) {
+        alert('이미 인증이 완료되었습니다.');
+        return;
+      }
+
+      // 인증번호 발송 여부 확인
+      if (!verification.confirmationResult) {
+        alert('먼저 인증번호를 발송해주세요.');
+        return;
+      }
+
+      // 인증 코드 유효성 검사 (중복 제거)
+      const verificationCode = verification.code;
+      if (!verificationCode || verificationCode.length !== 6 || !/^\d{6}$/.test(verificationCode)) {
+        alert('6자리 숫자로 된 인증번호를 입력해주세요.');
+        return;
+      }
+
+      // 인증 코드 확인
+      await verification.confirmationResult.confirm(verificationCode);
+
+      // 성공 시 상태 업데이트 (React 방식)
+      if (type === 'admin') {
+        setAdminVerification(prev => ({
+          ...prev,
+          isVerified: true,
+          isDisabled: true
+        }));
+      }
+      else {
+        setManagerVerification(prev => ({
+          ...prev,
+          isVerified: true,
+          isDisabled: true
+        }));
+      }
+
+      alert('인증이 성공적으로 완료되었습니다.');
+    }
+    catch (error) {
+      console.error('인증 실패:', error);
+
+      // 실패 시 상태 업데이트
+      if (type === 'admin') {
+        setAdminVerification(prev => ({
+          ...prev,
+          isVerified: false
+        }));
+      }
+      else {
+        setManagerVerification(prev => ({
+          ...prev,
+          isVerified: false
+        }));
+      }
+
+      alert(`인증 실패: ${getErrorMessage(error.code)}`);
+    }
+    finally {
+      setIsLoading(false);
     }
   };
 
-  // 담당자 휴대폰 인증 발송
-  const handleBranchManagerPhoneVerification = () => {
-    if (!branchManagerPhone) {
-      alert('담당자 휴대폰 번호를 입력해주세요.');
-      return;
-    }
-    alert('담당자 휴대폰 인증 코드를 발송했습니다. (실제 기능 아님)');
-    setBranchManagerPhoneVerificationSent(true);
-    setIsBranchManagerPhoneCodeVerified(false);
-  };
-
-  // 담당자 휴대폰 인증 코드 확인
-  const handleVerifyBranchManagerPhoneCode = () => {
-    if (branchManagerPhoneCode === '1234') { // 예시 코드
-      setIsBranchManagerPhoneCodeVerified(true);
-      alert('담당자 휴대폰 인증이 완료되었습니다.');
-    } else {
-      setIsBranchManagerPhoneCodeVerified(false);
-      alert('담당자 인증 코드가 올바르지 않습니다.');
-    }
-  };
 
   const handleAddressSearch = (type) => {
-    alert('우편번호 검색 팝업 (실제 기능 아님)');
-    if (type === 'headOffice') {
-      setHeadOfficeAddress('서울특별시 강남구 테헤란로 123 (본사)');
-    } else if (type === 'branch') {
-      setBranchAddress('서울특별시 서초구 서초대로 456 (지점)');
+    if (!isPostcodeLoaded || !window.daum || !window.daum.Postcode) {
+      alert('주소 검색 서비스를 로드 중입니다. 잠시 후 다시 시도해주세요.');
+      return;
     }
+
+    new window.daum.Postcode({
+      oncomplete: (data) => {
+        // 도로명 주소가 선택되었을 때
+        if (type === 'headOffice') {
+          // 본사 주소 설정
+          setHeadOfficeAddress(data.roadAddress);
+          setHeadOfficeDetailAddress('');
+        } else if (type === 'branch') {
+          // 사업장 주소 설정
+          setBranchAddress(data.roadAddress);
+          setBranchDetailAddress('');
+        }
+      },
+      onclose: (state) => {
+        // 팝업이 닫혔을 때의 처리
+        if (state === 'FORCE_CLOSE') {
+          alert('주소 검색이 취소되었습니다.');
+        }
+      }
+    }).open();
   };
 
   const handleAddBranch = () => {
-    if (!branchName || !branchAddress || !branchManagerName || !branchManagerPhone) {
+    if (!branchName || !branchAddress || !branchManagerName || !managerVerification.phone) {
       alert('사업장 정보 (사업장명, 주소, 담당자명, 담당자 휴대폰)를 모두 입력해주세요.');
       return;
     }
-    if (!isBranchManagerPhoneCodeVerified) {
+    if (!managerVerification.isVerified) {
       alert('사업장 담당자 휴대폰 인증을 완료해주세요.');
       return;
     }
@@ -130,19 +388,26 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
         name: branchName,
         address: `${branchAddress} ${branchDetailAddress}`.trim(),
         manager: branchManagerName,
-        phone: branchManagerPhone,
+        phone: managerVerification.phone,
       },
     ]);
 
+    // 사업장 정보 초기화
     setBranchName('');
     setBranchAddress('');
     setBranchDetailAddress('');
     setBranchManagerName('');
-    setBranchManagerPhone('');
-    setBranchManagerPhoneVerificationSent(false);
-    setBranchManagerPhoneCode('');
-    setIsBranchManagerPhoneCodeVerified(false);
+
+    // 담당자 인증 정보 초기화
+    setManagerVerification({
+      phone: '',
+      code: '',
+      isVerified: false,
+      confirmationResult: null,
+      isDisabled: false
+    });
   };
+
 
   const handleRemoveBranch = (index) => {
     setRegisteredBranches(registeredBranches.filter((_, i) => i !== index));
@@ -151,11 +416,11 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!id || !password || !confirmPassword || !name || !phone || !headOfficeName || !headOfficeAddress) {
+    if (!id || !password || !confirmPassword || !name || !adminVerification.phone || !headOfficeName || !headOfficeAddress) {
       alert('모든 필수 정보를 입력해주세요.');
       return;
     }
-    if (isIdAvailable !== true || isPasswordMatched !== true || !isPhoneCodeVerified) {
+    if (isIdAvailable !== true || isPasswordMatched !== true || !adminVerification.isVerified) {
       alert('입력 정보를 다시 확인해주세요.');
       return;
     }
@@ -165,12 +430,18 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
     }
 
     console.log('통합 관리자 회원 정보:', {
-      id, password, name, phone,
-      headOfficeName, headOfficeAddress, headOfficeDetailAddress,
+      id,
+      password,
+      name,
+      phone: adminVerification.phone,
+      headOfficeName,
+      headOfficeAddress,
+      headOfficeDetailAddress,
       registeredBranches,
     });
     onNextClick();
   };
+
 
   return (
     <div className="signup-page-three-head">
@@ -311,42 +582,66 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                 <input
                   type="tel"
                   id="phone-input"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="ex. 00012345678"
+                  value={adminVerification.phone}
+                  onChange={(e) => setAdminVerification(prev => ({
+                    ...prev,
+                    phone: e.target.value
+                  }))}
+                  placeholder="ex. 01012345678"
                   className="input-field"
+                  disabled={adminVerification.isDisabled}
                   required
                 />
-                <button type="button" className="action-button" onClick={handlePhoneVerification}>
-                  인증
+                <button
+                  type="button"
+                  className="action-button"
+                  onClick={() => handlePhoneVerification('admin')}
+                  disabled={isLoading || adminVerification.isDisabled}
+                >
+                  {isLoading ? '발송 중...' : '인증번호 발송'}
                 </button>
               </div>
             </div>
 
             {/* 휴대폰 인증 코드 입력 */}
-            {phoneVerificationSent && (
+            {adminVerification.confirmationResult && !adminVerification.isVerified && (
               <div className="form-row">
                 <label htmlFor="phone-code-input" className="required">인증 코드 입력</label>
                 <div className="input-with-button">
                   <input
                     type="text"
                     id="phone-code-input"
-                    value={phoneCode}
-                    onChange={(e) => setPhoneCode(e.target.value)}
+                    value={adminVerification.code}
+                    onChange={(e) => setAdminVerification(prev => ({
+                      ...prev,
+                      code: e.target.value
+                    }))}
                     placeholder="인증 코드 입력"
                     className="input-field"
+                    disabled={adminVerification.isDisabled}
+                    maxLength="6"
                   />
-                  <button type="button" className="action-button" onClick={handleVerifyPhoneCode}>
-                    확인
+                  <button
+                    type="button"
+                    className="action-button"
+                    onClick={() => handleVerifyPhoneCode('admin')}
+                    disabled={isLoading || adminVerification.isDisabled}
+                  >
+                    {isLoading ? '확인 중...' : '확인'}
                   </button>
                 </div>
-                {isPhoneCodeVerified && (
-                  <span className="input-guide success-message">
-                    <FaCheckCircle className="success-icon" /> 인증 완료
-                  </span>
-                )}
               </div>
             )}
+
+            {/* 인증 완료 메시지 (조건부 렌더링 개선) */}
+            {adminVerification.isVerified && (
+              <div className="form-row">
+                <span className="input-guide success-message">
+                  <FaCheckCircle className="success-icon" /> 인증 완료
+                </span>
+              </div>
+            )}
+
 
             {/* 본사 기본 정보 입력 */}
             <div className="section-title-with-circle second-section-title">본사 기본 정보 입력</div>
@@ -459,42 +754,66 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
                 <input
                   type="tel"
                   id="branch-manager-phone-input"
-                  value={branchManagerPhone}
-                  onChange={(e) => setBranchManagerPhone(e.target.value)}
-                  placeholder="ex. 00012345678"
+                  value={managerVerification.phone}
+                  onChange={(e) => setManagerVerification(prev => ({
+                    ...prev,
+                    phone: e.target.value
+                  }))}
+                  placeholder="ex. 01012345678"
                   className="input-field"
+                  disabled={managerVerification.isDisabled}
                   required
                 />
-                <button type="button" className="action-button" onClick={handleBranchManagerPhoneVerification}>
-                  인증
+                <button
+                  type="button"
+                  className="action-button"
+                  onClick={() => handlePhoneVerification('manager')}
+                  disabled={isLoading || managerVerification.isDisabled}
+                >
+                  {isLoading ? '발송 중...' : '인증번호 발송'}
                 </button>
               </div>
             </div>
 
             {/* 담당자 휴대폰 인증 코드 입력 */}
-            {branchManagerPhoneVerificationSent && (
+            {managerVerification.confirmationResult && !managerVerification.isVerified && (
               <div className="form-row">
                 <label htmlFor="branch-manager-phone-code-input" className="required">인증 코드 입력</label>
                 <div className="input-with-button">
                   <input
                     type="text"
                     id="branch-manager-phone-code-input"
-                    value={branchManagerPhoneCode}
-                    onChange={(e) => setBranchManagerPhoneCode(e.target.value)}
+                    value={managerVerification.code}
+                    onChange={(e) => setManagerVerification(prev => ({
+                      ...prev,
+                      code: e.target.value
+                    }))}
                     placeholder="인증 코드 입력"
                     className="input-field"
+                    disabled={managerVerification.isDisabled}
+                    maxLength="6"
                   />
-                  <button type="button" className="action-button" onClick={handleVerifyBranchManagerPhoneCode}>
-                    확인
+                  <button
+                    type="button"
+                    className="action-button"
+                    onClick={() => handleVerifyPhoneCode('manager')}
+                    disabled={isLoading || managerVerification.isDisabled}
+                  >
+                    {isLoading ? '확인 중...' : '확인'}
                   </button>
                 </div>
-                {isBranchManagerPhoneCodeVerified && (
-                  <span className="input-guide success-message">
-                    <FaCheckCircle className="success-icon" /> 인증 완료
-                  </span>
-                )}
               </div>
             )}
+
+            {/* 인증 완료 메시지 (조건부 렌더링 개선) */}
+            {managerVerification.isVerified && (
+              <div className="form-row">
+                <span className="input-guide success-message">
+                  <FaCheckCircle className="success-icon" /> 인증 완료
+                </span>
+              </div>
+            )}
+
 
             <div className="add-branch-button-container">
               <button type="button" className="add-branch-button" onClick={handleAddBranch}>
@@ -548,14 +867,15 @@ function SignupPageThreeHead({ onLoginClick, onPrevClick, onNextClick }) {
             className="nav-button next-button"
             onClick={(e) => {
               e.preventDefault();
-              if (!isPhoneCodeVerified) {
+              if (!adminVerification.isVerified) {
                 alert('휴대폰 인증을 완료해주세요.');
                 return;
               }
               handleSubmit(e);
             }}
+            disabled={isLoading}
           >
-            다음
+            {isLoading ? '처리 중...' : '다음'}
           </button>
         </div>
       </div>

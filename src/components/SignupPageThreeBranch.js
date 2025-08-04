@@ -58,26 +58,57 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
     return () => document.body.removeChild(script);
   }, []);
 
-  // [수정] 보이지 않는 reCAPTCHA 설정 함수
-  const setupRecaptcha = () => {
-    // 기존 reCAPTCHA 정리
-    if (window.recaptchaVerifier) {
-      window.recaptchaVerifier.clear();
+  // reCAPTCHA 설정 함수
+  const setupRecaptcha = async () => {
+    try {
+      // 기존 reCAPTCHA 정리
+      if (window.recaptchaVerifier) {
+        await window.recaptchaVerifier.clear();
+        window.recaptchaVerifier = null;
+      }
+
+      // reCAPTCHA 컨테이너 생성
+      const phoneInput = document.getElementById('phone-input');
+      if (!phoneInput) return;
+
+      // 새로운 reCAPTCHA 설정
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, phoneInput, {
+        size: 'invisible',
+        callback: () => {
+          console.log('reCAPTCHA verified');
+        },
+        'expired-callback': () => {
+          window.recaptchaVerifier = null;
+        },
+        'error-callback': () => {
+          window.recaptchaVerifier = null;
+        }
+      });
+    } catch (error) {
+      console.error('reCAPTCHA 설정 오류:', error);
       window.recaptchaVerifier = null;
+      throw error;
     }
-    // 보이지 않는 reCAPTCHA 설정
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'phone-verification-button', {
-      'size': 'invisible',
-    });
   };
 
-  // [수정] 인증 번호 발송 함수
+  // 인증 번호 발송 함수
   const handlePhoneVerification = async () => {
+    // 이미 인증이 완료된 경우
+    if (isAuthCodeVerified) {
+      alert('이미 인증이 완료되었습니다.');
+      return;
+    }
+
+    // 연속 클릭 방지
+    const button = document.getElementById('phone-verification-button');
+    if (button) button.disabled = true;
+
     try {
       // 전화번호 유효성 검사
       const phoneRegex = /^(\+82)?0?1[0-9]{8,9}$/;
       if (!phoneRegex.test(phone)) {
         alert('올바른 전화번호 형식을 입력해주세요 (예: 01012345678).');
+        if (button) button.disabled = false;
         return;
       }
 
@@ -110,22 +141,46 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
     }
   };
 
-  // [수정] 인증 코드 확인 함수
+  // 인증 코드 확인 함수
   const handleAuthCodeVerification = async () => {
+    // 이미 인증이 완료된 경우 처리
+    if (isAuthCodeVerified) {
+      alert('이미 인증이 완료되었습니다.');
+      return;
+    }
+
+    // 인증번호 발송 여부 확인
     if (!confirmationResult) {
       alert('먼저 인증번호를 발송해주세요.');
       return;
     }
+
+    // 인증 코드 유효성 검사
     if (!authCode || authCode.length !== 6) {
       alert('6자리 인증 코드를 입력해주세요.');
       return;
     }
+
+    // 연속 클릭 방지
+    const verifyButton = document.querySelector('button[onClick="handleAuthCodeVerification"]');
+    if (verifyButton) verifyButton.disabled = true;
+
     try {
       const result = await confirmationResult.confirm(authCode);
       setIsAuthCodeVerified(true);
       setFirebaseUid(result.user.uid);
       setShowAuthErrorModal(false);
-      alert('인증 성공!');
+      
+      // 인증 성공 시 관련 필드들 비활성화
+      const phoneInput = document.getElementById('phone-input');
+      const authCodeInput = document.getElementById('auth-code-input');
+      const verifyButton = document.getElementById('phone-verification-button');
+      
+      if (phoneInput) phoneInput.disabled = true;
+      if (authCodeInput) authCodeInput.disabled = true;
+      if (verifyButton) verifyButton.disabled = true;
+
+      alert('인증이 성공적으로 완료되었습니다.');
     } catch (error) {
       console.error('인증 실패:', error);
       setIsAuthCodeVerified(false);
@@ -249,8 +304,25 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
             <div className="form-row">
               <label htmlFor="phone-input" className="required">휴대폰</label>
               <div className="input-with-button">
-                <input type="tel" id="phone-input" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="ex. +821012345678" className="input-field" required />
-                <button type="button" id="phone-verification-button" className="action-button" onClick={handlePhoneVerification}>인증번호 발송</button>
+                <input
+                  type="tel"
+                  id="phone-input"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="ex. +821012345678"
+                  className="input-field"
+                  required
+                  disabled={isAuthCodeVerified}
+                />
+                <button
+                  type="button"
+                  id="phone-verification-button"
+                  className="action-button"
+                  onClick={handlePhoneVerification}
+                  disabled={isAuthCodeVerified}
+                >
+                  {isAuthCodeVerified ? '인증완료' : '인증번호 발송'}
+                </button>
               </div>
               {isPhoneVerified && <span className="input-guide success-message"><FaCheckCircle className="success-icon" /> 인증번호 발송 완료</span>}
             </div>
@@ -259,8 +331,24 @@ function SignupPageThreeBranch({ onLoginClick, onPrevClick, onNextClick }) {
               <div className="form-row auth-code-row">
                 <label htmlFor="auth-code-input" className="required">인증번호</label>
                 <div className="input-with-button">
-                  <input type="text" id="auth-code-input" value={authCode} onChange={(e) => setAuthCode(e.target.value)} placeholder="인증번호 입력" className="input-field" required />
-                  <button type="button" className="action-button" onClick={handleAuthCodeVerification}>인증번호 확인</button>
+                  <input
+                    type="text"
+                    id="auth-code-input"
+                    value={authCode}
+                    onChange={(e) => setAuthCode(e.target.value)}
+                    placeholder="인증번호 입력"
+                    className="input-field"
+                    required
+                    disabled={isAuthCodeVerified}
+                  />
+                  <button
+                    type="button"
+                    className="action-button"
+                    onClick={handleAuthCodeVerification}
+                    disabled={isAuthCodeVerified}
+                  >
+                    {isAuthCodeVerified ? '인증완료' : '인증번호 확인'}
+                  </button>
                 </div>
                 {isAuthCodeVerified && <span className="input-guide success-message"><FaCheckCircle className="success-icon" /> 인증 완료</span>}
               </div>
