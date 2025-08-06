@@ -118,18 +118,26 @@
   margin-bottom: 50px; /* 하단 알림 권한 섹션과의 간격 */
 }
 
+/* 헤더와 버튼을 감싸는 컨테이너 - flexbox 사용 */
 .table-header-actions {
-  display: grid;
-  /* 사업장, 주소, 관리자, 연락처, 권한, 제어 */
-  grid-template-columns: 1.5fr 2fr 1fr 1.5fr 0.8fr 1fr 150px; /* 각 컬럼 너비 비율 조정 */
-  gap: 15px;
+  display: flex;
+  justify-content: space-between; /* 자식 요소들을 양쪽 끝으로 정렬 */
+  align-items: center;
   padding-bottom: 15px;
   margin-bottom: 15px;
   border-bottom: 2px solid #eee;
-  font-size: 20px;
+}
+
+/* 테이블 헤더 컬럼들만 묶어서 grid 레이아웃 적용 */
+.table-column-headers {
+  display: grid;
+  /* 버튼을 제외한 6개 컬럼만 비율로 설정 */
+  grid-template-columns: 1.5fr 2fr 1fr 1.5fr 0.8fr 1fr;
+  gap: 15px;
+  flex-grow: 1; /* 남은 공간을 모두 차지 */
+  font-size: 22px;
   font-weight: bold;
   color: #333;
-  align-items: center;
 }
 
 .table-column-header {
@@ -145,12 +153,11 @@
 }
 
 .add-manager-button {
-  grid-column: 7 / 8; /* 마지막 컬럼에 배치 */
   background-color: #007bff;
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 12px 20px;
+  padding: 12px 50px; /* 원하는 너비로 패딩 조정 */
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
@@ -159,7 +166,6 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-left: auto; /* 오른쪽으로 정렬 */
 }
 
 .add-manager-button:hover {
@@ -173,11 +179,12 @@
 
 .table-row {
   display: grid;
-  grid-template-columns: 1.5fr 2fr 1fr 1.5fr 0.8fr 1fr 150px; /* 헤더와 동일한 컬럼 비율 */
+  /* 헤더와 동일한 컬럼 비율 */
+  grid-template-columns: 1.5fr 2fr 1fr 1.5fr 0.8fr 1fr;
   gap: 15px;
   padding: 15px 0;
   border-bottom: 1px solid #f0f0f0;
-  font-size: 18px;
+  font-size: 22px;
   color: #555;
   align-items: center;
 }
@@ -234,7 +241,6 @@
 /* 알림 권한 섹션 */
 .notification-permission-section {
   width: 100%;
-  max-width: 1000px; /* 알림 권한 섹션 너비 */
   background-color: white;
   border-radius: 15px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
@@ -330,7 +336,115 @@ input:checked + .slider:before {
 }
 
 
-/* 반응형 디자인 (기존 페이지와 유사하게 조정) */
+/* ================== 모달 스타일 추가 ================== */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 40px 60px;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content h2 {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.form-group input[type="text"] {
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-group-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.form-group-checkbox label {
+  margin-bottom: 0;
+}
+
+.form-group-checkbox input[type="checkbox"] {
+  transform: scale(1.5); /* 체크박스 크기 조절 */
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.modal-buttons button {
+  width: 50%;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.modal-buttons .save-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+}
+
+.modal-buttons .save-button:hover {
+  background-color: #0056b3;
+}
+
+.modal-buttons .cancel-button {
+  background-color: #e0e0e0;
+  color: #555;
+  border: none;
+}
+
+.modal-buttons .cancel-button:hover {
+  background-color: #ccc;
+}
+/* ================================================= */
+
+/* 반응형 디자인 (수정된 레이아웃에 맞게 업데이트) */
 @media (max-width: 1200px) {
   .dashboard-header-bar {
     padding: 20px 40px;
@@ -349,7 +463,6 @@ input:checked + .slider:before {
     padding: 12px 25px;
     font-size: 18px;
   }
-
   .dashboard-main-container {
     padding: 40px 30px;
     max-width: 95%;
@@ -358,14 +471,13 @@ input:checked + .slider:before {
     font-size: 52px;
     margin-bottom: 30px;
   }
-
-  /* 사용자 테이블 섹션 */
   .user-table-section {
     padding: 25px;
   }
-  .table-header-actions,
+  /* 새로운 table-column-headers에 grid 적용 */
+  .table-column-headers,
   .table-row {
-    grid-template-columns: 1fr 1.5fr 0.8fr 1.2fr 0.6fr 0.8fr 100px; /* 컬럼 비율 조정 */
+    grid-template-columns: 1fr 1.5fr 0.8fr 1.2fr 0.6fr 0.8fr; /* 6개 컬럼만 정의 */
     font-size: 18px;
     gap: 10px;
   }
@@ -406,7 +518,7 @@ input:checked + .slider:before {
   }
 }
 
-@media (max-width: 768px) { /* 모바일 최적화 */
+@media (max-width: 768px) {
   .dashboard-header-bar {
     padding: 15px 20px;
     height: 60px;
@@ -442,7 +554,6 @@ input:checked + .slider:before {
     font-size: 14px;
     order: 1;
   }
-
   .dashboard-main-container {
     padding: 30px 15px;
   }
@@ -451,26 +562,25 @@ input:checked + .slider:before {
     text-align: center;
     margin-bottom: 25px;
   }
-
-  /* 사용자 테이블 섹션 */
   .user-table-section {
     padding: 20px;
   }
-  .table-header-actions,
+  .table-column-headers,
   .table-row {
-    grid-template-columns: repeat(2, 1fr) 0.8fr 1fr; /* 모바일에서는 일부 컬럼 숨김 또는 재배치 */
+    grid-template-columns: repeat(2, 1fr) 0.8fr 1fr; /* 4개 컬럼으로 재배치 */
     font-size: 14px;
     gap: 8px;
   }
-  .table-header-actions .table-column-header:nth-child(3), /* 관리자 숨김 */
-  .table-header-actions .table-column-header:nth-child(4), /* 연락처 숨김 */
+  /* 모바일에서 숨길 컬럼들을 .table-column-headers에서도 적용 */
+  .table-column-headers .table-column-header:nth-child(3),
+  .table-column-headers .table-column-header:nth-child(4) {
+    display: none;
+  }
   .table-row .table-cell:nth-child(3),
   .table-row .table-cell:nth-child(4) {
     display: none;
   }
-
   .add-manager-button {
-    grid-column: 1 / -1; /* 전체 너비 차지 */
     font-size: 14px;
     padding: 10px;
   }
@@ -493,7 +603,7 @@ input:checked + .slider:before {
     margin-bottom: 20px;
   }
   .toggle-group {
-    flex-direction: column; /* 세로 정렬 */
+    flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }

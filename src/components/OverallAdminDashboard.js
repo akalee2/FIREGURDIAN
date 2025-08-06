@@ -1,7 +1,7 @@
 // src/components/OverallAdminDashboard.js
 import React from 'react'; // 이 import 문은 파일의 맨 위에 있어야 합니다.
 import './OverallAdminDashboard.css';
-import FireGuardianLogo from '../assets/로고.png'; // 기존 로고 이미지 재사용
+import FireGuardianLogo from '../assets/대비로고.png'; // 기존 로고 이미지 재사용
 
 function OverallAdminDashboard({ onLoginClick, onNavigate }) {
   // onNavigate는 대시보드 내 다른 메뉴 (사업장관리, 사용자관리 등) 클릭 시 호출될 함수입니다.

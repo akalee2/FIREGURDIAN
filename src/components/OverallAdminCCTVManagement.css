@@ -1,4 +1,4 @@
-/* src/components/OverallAdminCCTVManagement.css */
+/* src/components/CCTVManagement.css */
 
 .cctv-management-page {
   display: flex;
@@ -94,7 +94,9 @@
   flex-direction: column;
   align-items: center;
   padding: 50px;
-  width: 100%; /* 너비를 꽉 채우도록 수정 */
+  max-width: 1800px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .management-title {
@@ -103,7 +105,6 @@
   color: #333;
   margin-bottom: 40px;
   width: 100%;
-  max-width: 1800px; /* 큰 화면에서 가독성을 위해 최대 너비 유지 */
   text-align: left;
 }
 
@@ -113,7 +114,6 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   padding: 40px;
   width: 100%;
-  max-width: 1800px;
 }
 
 /* CCTV 추가 섹션 */
@@ -150,62 +150,33 @@
   background-color: #218838;
 }
 
-/* 드래그앤드롭 리스트 스타일 */
-.cctv-list-container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
+/* CCTV 테이블 스타일 */
+.cctv-table-container {
+  overflow-x: auto;
 }
 
-.cctv-list-header, .cctv-item {
-  display: grid;
-  grid-template-columns: 2fr 3fr 1fr 1fr;
-  align-items: center;
-  gap: 20px;
+.cctv-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.cctv-table th,
+.cctv-table td {
   padding: 20px;
   border-bottom: 1px solid #eee;
   font-size: 18px;
+  vertical-align: middle;
 }
 
-.cctv-list-header {
-  font-weight: bold;
+.cctv-table th {
   background-color: #f0f0f0;
+  font-weight: bold;
   color: #555;
-  border-radius: 8px 8px 0 0;
 }
 
-.cctv-item {
-  background-color: white;
-  transition: background-color 0.2s, box-shadow 0.2s;
-  cursor: grab;
-}
-
-.cctv-item:last-child {
+.cctv-table tr:last-child td {
   border-bottom: none;
-}
-
-.cctv-item:hover {
-  background-color: #f9f9f9;
-}
-
-.cctv-item.is-dragging {
-  background-color: #e9ecef;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.cctv-col-name, .cctv-col-link {
-  word-wrap: break-word;
-}
-
-.cctv-col-status {
-  text-align: center;
-}
-
-.cctv-col-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  align-items: center;
 }
 
 /* 입력/버튼 스타일 */
@@ -215,6 +186,11 @@
   font-size: 16px;
   border: 1px solid #ddd;
   border-radius: 5px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
 }
 
 .action-btn {
@@ -287,6 +263,38 @@
   color: #007bff;
 }
 
+/* 순서 변경 버튼 */
+.order-buttons-cell {
+  text-align: center;
+}
+
+.order-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.order-buttons button {
+  background-color: #e9ecef;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #495057;
+  transition: background-color 0.2s;
+}
+
+.order-buttons button:hover:not(:disabled) {
+  background-color: #ced4da;
+}
+
+.order-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 1200px) {
   .management-main-container {
@@ -306,9 +314,9 @@
     padding: 12px 20px;
     font-size: 16px;
   }
-  .cctv-list-header, .cctv-item {
+  .cctv-table th, .cctv-table td {
+    padding: 15px;
     font-size: 16px;
-    gap: 15px;
   }
   .action-btn {
     font-size: 18px;
@@ -341,17 +349,15 @@
   .add-cctv-btn {
     font-size: 14px;
   }
-  .cctv-list-header, .cctv-item {
+  .cctv-table th, .cctv-table td {
+    padding: 10px;
     font-size: 14px;
-    grid-template-columns: 1.5fr 2fr 0.5fr 1fr;
-    gap: 10px;
-    padding: 15px;
-  }
-  .action-btn {
-    font-size: 16px;
   }
   .action-buttons {
     flex-direction: column;
     gap: 5px;
+  }
+  .action-btn {
+    font-size: 16px;
   }
 }

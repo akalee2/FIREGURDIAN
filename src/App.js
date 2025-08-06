@@ -10,6 +10,7 @@ import OverallAdminDashboard from './components/OverallAdminDashboard';
 import OverallAdminUserManagement from './components/OverallAdminUserManagement';
 import OverallAdminBusinessManagement from './components/OverallAdminBusinessManagement';
 import OverallAdminCCTV from './components/OverallAdminCCTV';
+import OverallAdminCCTVManagement from './components/OverallAdminCCTVManagement'; // CCTV 관리 컴포넌트 임포트
 import BranchAdminDashboard from './components/BranchAdminDashboard';
 import BranchAdminCCTV from './components/BranchAdminCCTV';
 import './App.css'; // App.css 임포트 유지
@@ -18,6 +19,18 @@ function App() {
   const [currentPage, setCurrentPage] = useState('login');
   const [signupType, setSignupType] = useState(null);
   const [loggedInUserType, setLoggedInUserType] = useState(null);
+
+  // CCTV 데이터를 App.js에서 중앙 관리합니다.
+  // 이 데이터는 OverallAdminCCTV와 OverallAdminCCTVManagement 간에 공유됩니다.
+  const [cctvData, setCctvData] = useState([
+    { id: 1, name: '01_F_실내1', link: 'https://placehold.co/400x250/000000/FFFFFF?text=CCTV+Feed+1', status: 'saved' },
+    { id: 2, name: '04_S_실내2', link: 'https://placehold.co/400x250/000000/FFFFFF?text=CCTV+Feed+2', status: 'saved' },
+    { id: 3, name: '08_E_복도', link: 'https://placehold.co/400x250/000000/FFFFFF?text=CCTV+Feed+3', status: 'saved' },
+    { id: 4, name: '09_E_실외', link: 'https://placehold.co/400x250/000000/FFFFFF?text=CCTV+Feed+4', status: 'saved' },
+    { id: 5, name: '10_S_창고', link: 'https://placehold.co/400x250/000000/FFFFFF?text=CCTV+Feed+5', status: 'saved' },
+    { id: 6, name: '11_S_입구', link: 'https://placehold.co/400x250/000000/FFFFFF?text=CCTV+Feed+6', status: 'saved' },
+    { id: 7, name: '12_S_주차장', link: 'https://placehold.co/400x250/000000/FFFFFF?text=CCTV+Feed+7', status: 'saved' },
+  ]);
 
   const handleLoginClick = () => {
     setCurrentPage('login');
@@ -98,7 +111,12 @@ function App() {
         <OverallAdminBusinessManagement onLoginClick={handleLoginClick} onNavigate={handleDashboardNavigate} />
       )}
       {currentPage === 'cctv' && loggedInUserType === 'head' && (
-        <OverallAdminCCTV onLoginClick={handleLoginClick} onNavigate={handleDashboardNavigate} />
+        // OverallAdminCCTV에 cctvData를 prop으로 전달합니다.
+        <OverallAdminCCTV onLoginClick={handleLoginClick} onNavigate={handleDashboardNavigate} cctvData={cctvData} />
+      )}
+      {currentPage === 'cctv_management' && loggedInUserType === 'head' && (
+        // OverallAdminCCTVManagement에 cctvData와 setCctvData를 prop으로 전달합니다.
+        <OverallAdminCCTVManagement onLoginClick={handleLoginClick} onNavigate={handleDashboardNavigate} cctvList={cctvData} setCctvList={setCctvData} />
       )}
       {currentPage === 'branch_dashboard' && loggedInUserType === 'branch' && (
         <BranchAdminDashboard onLoginClick={handleLoginClick} onNavigate={handleDashboardNavigate} loggedInUserType={loggedInUserType} />
