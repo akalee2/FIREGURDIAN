@@ -1,7 +1,7 @@
 // src/components/OverallAdminBusinessManagement.js
 import React, { useState, useEffect } from 'react';
 import './OverallAdminBusinessManagement.css';
-import FireGuardianLogo from '../assets/대비로고.png'; // 기존 로고 이미지 재사용
+import FireGuardianLogo from '../assets/로고.png'; // 기존 로고 이미지 재사용
 import { FaUpload, FaDownload, FaChevronDown, FaCheckCircle, FaSave, FaTimes, FaPen, FaSearch, FaPlus } from 'react-icons/fa'; // FaSearch와 FaPlus 추가
 
 function OverallAdminBusinessManagement({ onLoginClick, onNavigate }) {

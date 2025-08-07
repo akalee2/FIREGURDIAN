@@ -1,23 +1,25 @@
+// src/components/OverallAdminCCTV.js
 import React, { useState } from 'react';
 import './OverallAdminCCTV.css';
-import FireGuardianLogo from '../assets/로고.png'; // 기존 로고 이미지 재사용
-import { FaCheckCircle, FaExclamationCircle, FaArrowLeft, FaArrowRight } from 'react-icons/fa'; // 아이콘 사용
+import FireGuardianLogo from '../assets/로고.png';
+import { FaCheckCircle, FaExclamationCircle, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
 function OverallAdminCCTV({ onLoginClick, onNavigate }) {
-  // CCTV 영상 더미 데이터
   const cctvData = [
-    { id: 1, name: '01_F_실내1', link: 'https://placehold.co/400x250/000000/FFFFFF?text=CCTV+Feed+1', isDetected: true },
-    { id: 2, name: '04_S_실내2', link: 'https://placehold.co/400x250/000000/FFFFFF?text=CCTV+Feed+2', isDetected: false },
-    { id: 3, name: '08_E_복도', link: 'https://placehold.co/400x250/000000/FFFFFF?text=CCTV+Feed+3', isDetected: false },
-    { id: 4, name: '09_E_실외', link: 'https://placehold.co/400x250/000000/FFFFFF?text=CCTV+Feed+4', isDetected: false },
-    { id: 5, name: '10_S_창고', link: 'https://placehold.co/400x250/000000/FFFFFF?text=CCTV+Feed+5', isDetected: false },
-    { id: 6, name: '11_S_입구', link: 'https://placehold.co/400x250/000000/FFFFFF?text=CCTV+Feed+6', isDetected: false },
-    { id: 7, name: '12_S_주차장', link: 'https://placehold.co/400x250/000000/FFFFFF?text=CCTV+Feed+7', isDetected: false },
+    { id: 1, name: '01_F_실내1', link: 'https://placehold.co/640x640/000000/FFFFFF?text=CCTV+Feed+1', isDetected: true },
+    { id: 2, name: '04_S_실내2', link: 'https://placehold.co/640x640/000000/FFFFFF?text=CCTV+Feed+2', isDetected: false },
+    { id: 3, name: '08_E_복도', link: 'https://placehold.co/640x640/000000/FFFFFF?text=CCTV+Feed+3', isDetected: false },
+    { id: 4, name: '09_E_실외', link: 'https://placehold.co/640x640/000000/FFFFFF?text=CCTV+Feed+4', isDetected: false },
+    { id: 5, name: '10_S_창고', link: 'https://placehold.co/640x640/000000/FFFFFF?text=CCTV+Feed+5', isDetected: false },
+    { id: 6, name: '11_S_입구', link: 'https://placehold.co/640x640/000000/FFFFFF?text=CCTV+Feed+6', isDetected: false },
+    { id: 7, name: '12_S_주차장', link: 'https://placehold.co/640x640/000000/FFFFFF?text=CCTV+Feed+7', isDetected: false },
+    { id: 8, name: '13_E_정문', link: 'https://placehold.co/640x640/000000/FFFFFF?text=CCTV+Feed+8', isDetected: false },
+    { id: 9, name: '14_F_후문', link: 'https://placehold.co/640x640/000000/FFFFFF?text=CCTV+Feed+9', isDetected: false },
+    { id: 10, name: '15_F_옥상', link: 'https://placehold.co/640x640/000000/FFFFFF?text=CCTV+Feed+10', isDetected: false },
   ];
 
-  // 페이지네이션 상태
   const [currentPage, setCurrentPage] = useState(1);
-  const cctvsPerPage = 4; // 한 페이지에 4개의 CCTV
+  const cctvsPerPage = 2; // 한 페이지에 2개의 CCTV
   const indexOfLastCCTV = currentPage * cctvsPerPage;
   const indexOfFirstCCTV = indexOfLastCCTV - cctvsPerPage;
   const currentCCTVs = cctvData.slice(indexOfFirstCCTV, indexOfLastCCTV);
@@ -35,8 +37,7 @@ function OverallAdminCCTV({ onLoginClick, onNavigate }) {
     }
   };
 
-  // 화재 감지 일지 데이터 (예시)
-  const [fireLogs, setFireLogs] = useState([
+  const [fireLogs] = useState([
     { id: 1, date: '07.08', time: '14:21', type: '감지', location: '사업장 1', status: 'detected' },
     { id: 2, date: '07.08', time: '14:24', type: '문제 해결', location: '사업장 1', status: 'resolved' },
     { id: 3, date: '07.07', time: '09:30', type: '감지', location: '사업장 2', status: 'detected' },
@@ -44,12 +45,10 @@ function OverallAdminCCTV({ onLoginClick, onNavigate }) {
     { id: 5, date: '07.06', time: '11:00', type: '감지', location: '사업장 1', status: 'detected' },
   ]);
 
-  // 기간 필터 상태
   const [filterPeriod, setFilterPeriod] = useState('7days');
 
   return (
     <div className="overall-admin-cctv">
-      {/* 상단 헤더 바 */}
       <div className="dashboard-header-bar">
         <div className="header-left">
           <div className="header-logo" onClick={() => onNavigate('dashboard')} style={{ cursor: 'pointer' }}>
@@ -69,23 +68,13 @@ function OverallAdminCCTV({ onLoginClick, onNavigate }) {
         </button>
       </div>
 
-      {/* 메인 컨테이너 */}
       <div className="dashboard-main-container">
         <h1 className="dashboard-title">CCTV 모니터링</h1>
-
-        {/* CCTV 관리 페이지로 이동 버튼을 화재 감지 일지 블록 상단에 배치 */}
-        <div className="cctv-header-actions">
-          <button className="cctv-management-btn" onClick={() => onNavigate('cctv_management')}>
-            CCTV 관리 페이지로 이동
-          </button>
-        </div>
+        
+        {/* CCTV 관리 페이지 이동 버튼이 삭제되었습니다. */}
 
         <div className="cctv-content-grid">
-          {/* 왼쪽 메인 영역 (CCTV 영상) */}
           <div className="cctv-main-area">
-            {/* 드롭다운 제거 */}
-            
-            {/* 동적으로 CCTV 영상 렌더링 */}
             <div className="cctv-video-grid">
               {currentCCTVs.map(cctv => (
                 <div key={cctv.id} className="video-placeholder">
@@ -96,7 +85,6 @@ function OverallAdminCCTV({ onLoginClick, onNavigate }) {
               ))}
             </div>
 
-            {/* 페이지네이션 컨트롤 */}
             {totalPages > 1 && (
               <div className="cctv-pagination">
                 <button 
@@ -120,7 +108,6 @@ function OverallAdminCCTV({ onLoginClick, onNavigate }) {
             )}
           </div>
 
-          {/* 오른쪽 사이드바 영역 (화재 감지 일지) */}
           <div className="fire-log-sidebar">
             <h2 className="sidebar-title">화재 감지 일지</h2>
             <div className="log-list-container">
