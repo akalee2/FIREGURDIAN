@@ -5,7 +5,7 @@
     flex-direction: column;
     min-height: 100vh;
     background-color: #f8f8f8;
-    font-family: -apple-system, BlinkMacMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
         'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
         sans-serif;
 }
@@ -380,16 +380,31 @@
     width: 250px;
     height: 250px;
     border-radius: 50%;
-    background-color: #f0f0f0;
+    /* 기존 배경색은 삭제하고 동적으로 적용합니다 */
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 80px;
     font-weight: bold;
-    color: #333;
+    color: white; /* 텍스트 색상을 흰색으로 통일 */
     position: relative;
     overflow: hidden;
+    transition: all 0.3s ease-in-out; /* 부드러운 전환 효과 추가 */
 }
+
+.score-circle-large.safe {
+    background-image: linear-gradient(to bottom right, #4CAF50, #81C784);
+}
+
+.score-circle-large.warning {
+    background-image: linear-gradient(to bottom right, #FFC107, #FFEB3B);
+    color: #333; /* 경고 상태에서는 텍스트 색상을 검정색으로 */
+}
+
+.score-circle-large.danger {
+    background-image: linear-gradient(to bottom right, #F44336, #E57373);
+}
+
 
 .score-circle-large .score-value-large {
     z-index: 1;
@@ -398,9 +413,22 @@
 .score-status-label {
     font-size: 32px;
     font-weight: bold;
-    color: #ffc107;
     margin-top: 15px;
+    transition: color 0.3s ease-in-out;
 }
+
+.score-status-label.safe {
+    color: #4CAF50;
+}
+
+.score-status-label.warning {
+    color: #FFC107;
+}
+
+.score-status-label.danger {
+    color: #F44336;
+}
+
 
 .score-description {
     font-size: 20px;
@@ -536,46 +564,14 @@
 .overall-analysis-report-section {
     grid-column: 2 / 3;
     grid-row: 1 / 3;
-}
-
-.overall-report-dropdown-group {
-    position: relative;
-    margin-bottom: 20px;
-    width: 100%;
-}
-
-.overall-report-dropdown {
-    width: 100%;
-    padding: 15px 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 20px;
-    appearance: none;
-    background-color: white;
-    cursor: pointer;
-    padding-right: 40px;
-}
-
-.overall-report-dropdown:focus {
-    outline: none;
-    border-color: #007bff;
-}
-
-.overall-dropdown-arrow-icon {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #777;
-    font-size: 20px;
-    pointer-events: none;
-}
-
-.overall-deduction-title {
-    margin-top: 40px;
+    /* 드롭다운이 삭제되면서 레이아웃이 변경됨 */
 }
 
 /* 감점 사유 로그 박스 스타일 */
+.overall-deduction-title { 
+    margin-top: 0; /* 드롭다운 삭제로 마진 제거 */
+}
+
 .overall-deduction-log-box {
     border: 1px solid #ddd;
     background-color: #f9f9f9;
@@ -642,50 +638,6 @@
     background-color: #1a242f;
 }
 
-.overall-report-content {
-    background-color: #f8f8f8; /* 보고서 내용 박스 배경색 */
-    border: 1px solid #ddd; /* 테두리 */
-    border-radius: 8px; /* 둥근 모서리 */
-    padding: 15px 20px; /* 내부 여백 */
-    margin-top: -10px; /* 드롭다운과의 상단 간격 */
-    margin-bottom: 13px;
-    font-size: 1.1em; /* 폰트 크기 */
-    color: #555; /* 텍스트 색상 */
-    line-height: 1.6; /* 줄 간격 */
-    white-space: pre-wrap; /* 줄 바꿈 유지 */
-    word-break: break-word; /* 긴 단어의 줄 바꿈 */
-    max-height: 150px; /* 내용이 길어질 경우 스크롤을 위한 최대 높이 */
-    overflow-y: auto; /* 내용 초과 시 세로 스크롤 */
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); /* 은은한 내부 그림자 */
-    transition: all 0.2s ease-in-out; /* 부드러운 전환 효과 */
-}
-
-/* 첫 번째 드롭다운 그룹은 상단 마진 불필요 */
-.overall-analysis-report-section .overall-report-dropdown-group:first-of-type {
-    margin-top: 0;
-}
-
-/* 드롭다운 그룹 하단 여백 조정 */
-.overall-report-dropdown-group {
-    margin-bottom: 20px;
-}
-
-/* 보고서 내용 박스가 나타날 때의 애니메이션 */
-.overall-report-content {
-    animation: fadeIn 0.3s ease-out;
-}
-
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
 /* 반응형 디자인 */
 @media (max-width: 1200px) {
@@ -794,18 +746,8 @@
     .uploaded-file-item {
         font-size: 16px;
     }
-    .overall-report-dropdown-group { /* 클래스명 변경 */
-        margin-bottom: 15px;
-    }
-    .overall-report-dropdown { /* 클래스명 변경 */
-        padding: 12px 20px;
-        font-size: 18px;
-    }
-    .overall-dropdown-arrow-icon { /* 클래스명 변경 */
-        font-size: 18px;
-    }
     .overall-deduction-title { /* 클래스명 변경 */
-        margin-top: 30px;
+        margin-top: 0;
     }
     .overall-deduction-log-box { /* 클래스명 변경 */
         padding: 15px;
@@ -841,16 +783,6 @@
     .delete-file-button {
         font-size: 22px;
         padding: 6px;
-    }
-
-    .overall-report-content { /* 클래스명 변경 */
-        padding: 12px 18px;
-        font-size: 0.9em;
-        max-height: 120px;
-        margin-top: 8px;
-    }
-    .overall-report-dropdown-group { /* 클래스명 변경 */
-        margin-bottom: 15px;
     }
 }
 
@@ -978,18 +910,8 @@
     .uploaded-file-item {
         font-size: 14px;
     }
-    .overall-report-dropdown-group { /* 클래스명 변경 */
-        margin-bottom: 10px;
-    }
-    .overall-report-dropdown { /* 클래스명 변경 */
-        padding: 10px 15px;
-        font-size: 16px;
-    }
-    .overall-dropdown-arrow-icon { /* 클래스명 변경 */
-        font-size: 16px;
-    }
     .overall-deduction-title { /* 클래스명 변경 */
-        margin-top: 25px;
+        margin-top: 0;
     }
     .overall-deduction-log-box { /* 클래스명 변경 */
         padding: 10px;
@@ -1009,15 +931,5 @@
     .overall-download-report-button { /* 클래스명 변경 */
         padding: 15px 20px;
         font-size: 18px;
-    }
-
-    .overall-report-content { /* 클래스명 변경 */
-        padding: 10px 15px;
-        font-size: 0.85em;
-        max-height: 100px;
-        margin-top: 6px;
-    }
-    .overall-report-dropdown-group { /* 클래스명 변경 */
-        margin-bottom: 10px;
     }
 }
