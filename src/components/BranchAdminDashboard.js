@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import './BranchAdminDashboard.css';
-import FireGuardianLogo from '../assets/대비로고.png'; // 로고 이미지 경로 확인
-import { FaUpload, FaDownload, FaChevronDown, FaCheckCircle, FaSave, FaTimes, FaPen } from 'react-icons/fa';
+import FireGuardianLogo from '../assets/로고.png'; // 로고 이미지 경로 확인
+import { FaUpload, FaDownload, FaCheckCircle, FaSave, FaTimes, FaPen } from 'react-icons/fa';
 
 function BranchAdminDashboard({ onLoginClick, onNavigate }) {
     // --- Mock Data (실제 환경에서는 API 호출로 받아옵니다) ---
@@ -82,29 +82,11 @@ function BranchAdminDashboard({ onLoginClick, onNavigate }) {
         }
     }, [selectedPlaceId, currentSelectedPlace]);
 
-    // 분석 보고서 드롭다운 상태
-    const [cctvReport, setCctvReport] = useState('');
-    const [drawingReport, setDrawingReport] = useState('');
-    const [legalReport, setLegalReport] = useState('');
-
-    // 보고서 내용 표시를 위한 새로운 State 추가
-    const [cctvReportContent, setCctvReportContent] = useState('');
-    const [drawingReportContent, setDrawingReportContent] = useState('');
-    const [legalReportContent, setLegalReportContent] = useState('');
-
-
     // --- 이벤트 핸들러 ---
 
     // 지점(장소) 선택 핸들러
     const handlePlaceSelect = (id) => {
         setSelectedPlaceId(id);
-        // 장소 변경 시 보고서 내용 초기화
-        setCctvReport('');
-        setDrawingReport('');
-        setLegalReport('');
-        setCctvReportContent('');
-        setDrawingReportContent('');
-        setLegalReportContent('');
     };
 
     // 검색 입력 필드 변경 핸들러
@@ -198,49 +180,6 @@ function BranchAdminDashboard({ onLoginClick, onNavigate }) {
     const handleDownloadReport = () => {
         alert('통합 분석 보고서를 다운로드합니다. (실제 기능 아님)');
     };
-
-    // 드롭다운 선택 변경 시 보고서 내용 업데이트
-    const handleReportChange = (e, reportType) => {
-        const value = e.target.value;
-        let content = '';
-
-        // 실제로는 여기에서 value(보고서 ID 등)를 사용하여 서버에서 해당 보고서 내용을 가져옵니다.
-        // 지금은 예시 데이터를 사용합니다.
-        if (value) { // '선택 안 함'이 아닐 경우에만 내용 표시
-            switch (reportType) {
-                case 'cctv':
-                    setCctvReport(value);
-                    if (value === 'cctv_report_1') content = 'CCTV 보고서 2025-07-01: 최근 한 달간 침입 시도 2회 감지, 수상한 움직임 5회 포착. 전반적으로 양호하나, 특정 시간대 모니터링 강화 필요.';
-                    else if (value === 'cctv_report_2') content = 'CCTV 보고서 2025-06-15: 건물 주변 이상 없음. 비상 상황 발생 시 비상벨 위치 안내 시스템 정상 작동 확인.';
-                    break;
-                case 'drawing':
-                    setDrawingReport(value);
-                    if (value === 'drawing_report_1') content = '도면 보고서 2025-07-01: 비상구 유도등 위치 및 개수 법규 준수. 소화기 비치 간격 적정.';
-                    else if (value === 'drawing_report_2') content = '도면 보고서 2025-06-01: 피난 경로 일부 구간 물품 적재 확인, 시정 조치 필요.';
-                    break;
-                case 'legal':
-                    setLegalReport(value);
-                    if (value === 'legal_report_1') content = '법적 보고서 2025-07-01: 소방시설 설치 및 관리 법률 제 10조 준수. 피난 유도선 설치 기준 충족.';
-                    else if (value === 'legal_report_2') content = '법적 보고서 2025-05-20: 비상구 출구 폭 기준 미달 (구형 건물). 개선 방안 검토 중.';
-                    break;
-                default:
-                    break;
-            }
-        } else { // '선택 안 함'을 선택한 경우 내용 초기화
-            switch (reportType) {
-                case 'cctv': setCctvReport(''); setCctvReportContent(''); break;
-                case 'drawing': setDrawingReport(''); setDrawingReportContent(''); break;
-                case 'legal': setLegalReport(''); setLegalReportContent(''); break;
-                default: break;
-            }
-        }
-
-        // 해당 보고서 타입의 내용을 업데이트
-        if (reportType === 'cctv') setCctvReportContent(content);
-        else if (reportType === 'drawing') setDrawingReportContent(content);
-        else if (reportType === 'legal') setLegalReportContent(content);
-    };
-
 
     // 선택된 장소가 없을 경우 로딩 메시지
     if (!currentSelectedPlace) {
@@ -476,49 +415,6 @@ function BranchAdminDashboard({ onLoginClick, onNavigate }) {
 
                             {/* 분석 보고서 및 감점 사유 섹션 */}
                             <div className="grid-item analysis-report-section">
-                                <div className="item-title">분석 보고서</div>
-                                <div className="report-dropdown-group">
-                                    <select
-                                        className="report-dropdown"
-                                        value={cctvReport}
-                                        onChange={(e) => handleReportChange(e, 'cctv')}
-                                    >
-                                        <option value="">CCTV 영상 분석 결과 선택</option>
-                                        <option value="cctv_report_1">CCTV 보고서 2025-07-01</option>
-                                        <option value="cctv_report_2">CCTV 보고서 2025-06-15</option>
-                                    </select>
-                                    <FaChevronDown className="dropdown-arrow-icon" />
-                                </div>
-                                {cctvReportContent && <div className="report-content">{cctvReportContent}</div>}
-
-                                <div className="report-dropdown-group">
-                                    <select
-                                        className="report-dropdown"
-                                        value={drawingReport}
-                                        onChange={(e) => handleReportChange(e, 'drawing')}
-                                    >
-                                        <option value="">사업장 도면 분석 결과 선택</option>
-                                        <option value="drawing_report_1">도면 보고서 2025-07-01</option>
-                                        <option value="drawing_report_2">도면 보고서 2025-06-01</option>
-                                    </select>
-                                    <FaChevronDown className="dropdown-arrow-icon" />
-                                </div>
-                                {drawingReportContent && <div className="report-content">{drawingReportContent}</div>}
-
-                                <div className="report-dropdown-group">
-                                    <select
-                                        className="report-dropdown"
-                                        value={legalReport}
-                                        onChange={(e) => handleReportChange(e, 'legal')}
-                                    >
-                                        <option value="">법적 기준 분석 결과 선택</option>
-                                        <option value="legal_report_1">법적 보고서 2025-07-01</option>
-                                        <option value="legal_report_2">법적 보고서 2025-05-20</option>
-                                    </select>
-                                    <FaChevronDown className="dropdown-arrow-icon" />
-                                </div>
-                                {legalReportContent && <div className="report-content">{legalReportContent}</div>}
-
                                 <div className="item-title deduction-title">감점 사유</div>
                                 <div className="deduction-log-box">
                                     {currentSelectedPlace.deductionLogs && currentSelectedPlace.deductionLogs.length > 0 ? (
