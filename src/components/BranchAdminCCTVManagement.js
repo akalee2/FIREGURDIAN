@@ -1,7 +1,7 @@
 // src/components/BranchAdminCCTVManagement.js
 import React, { useState } from 'react';
-import './OverallAdminCCTVManagement.css'; // 기존 CSS 재사용
-import FireGuardianLogo from '../assets/대비로고.png';
+import './BranchAdminCCTVManagement.css'; // 기존 CSS 재사용
+import FireGuardianLogo from '../assets/로고.png';
 import { FaPlus, FaSearch, FaTimes, FaPen, FaTrash, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 
 // 지점 관리자용 CCTV 관리 컴포넌트
@@ -96,8 +96,7 @@ function BranchAdminCCTVManagement({ onLoginClick, onNavigate }) {
           </div>
           <nav className="main-nav">
             <ul>
-              <li onClick={() => onNavigate('branch_dashboard')}>대시보드</li>
-              <li onClick={() => onNavigate('business_management')}>사업장관리</li>
+              <li onClick={() => onNavigate('branch_dashboard')}>사업장관리</li>
               <li className="active" onClick={() => onNavigate('branch_cctv')}>CCTV</li>
             </ul>
           </nav>

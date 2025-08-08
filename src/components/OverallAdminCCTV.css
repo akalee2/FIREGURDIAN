@@ -92,6 +92,7 @@
   flex-grow: 1; /* 부모(overall-admin-cctv)의 남는 세로 공간을 모두 차지 */
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
   padding: 50px 80px;
   width: 100%;
   max-width: none;

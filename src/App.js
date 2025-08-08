@@ -12,16 +12,14 @@ import OverallAdminBusinessManagement from './components/OverallAdminBusinessMan
 import OverallAdminCCTV from './components/OverallAdminCCTV';
 import BranchAdminDashboard from './components/BranchAdminDashboard';
 import BranchAdminCCTV from './components/BranchAdminCCTV';
-import BranchAdminCCTVManagement from './components/BranchAdminCCTVManagement'; // 올바른 파일명으로 import
-import './App.css'; // App.css 임포트 유지
+import BranchAdminCCTVManagement from './components/BranchAdminCCTVManagement';
+import './App.css';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('login');
   const [signupType, setSignupType] = useState(null);
   const [loggedInUserType, setLoggedInUserType] = useState(null);
 
-  // CCTV 데이터를 App.js에서 중앙 관리합니다.
-  // 이 데이터는 OverallAdminCCTV와 BranchAdminCCTVManagement 간에 공유됩니다.
   const [cctvData, setCctvData] = useState([
     { id: 1, name: '01_F_실내1', link: 'https://placehold.co/400x250/000000/FFFFFF?text=CCTV+Feed+1', status: 'saved' },
     { id: 2, name: '04_S_실내2', link: 'https://placehold.co/400x250/000000/FFFFFF?text=CCTV+Feed+2', status: 'saved' },
@@ -69,7 +67,6 @@ function App() {
       } else if (signupType === 'head') {
         setCurrentPage('signupThreeHead');
       } else {
-        // alert('회원 유형이 선택되지 않았습니다. 다시 선택해주세요.'); // alert 대신 커스텀 모달 사용
         console.error('회원 유형이 선택되지 않았습니다. 다시 선택해주세요.');
         setCurrentPage('signupOne');
       }
@@ -83,7 +80,7 @@ function App() {
   };
 
   return (
-    <div className="App"> {/* 모든 페이지에 "App" 클래스만 적용 */}
+    <div className="App">
       {currentPage === 'login' && (
         <LoginPage onSignupClick={goToSignupOne} onLoginSuccess={handleLoginSuccess} />
       )}
@@ -121,7 +118,6 @@ function App() {
         <BranchAdminCCTV onLoginClick={handleLoginClick} onNavigate={handleDashboardNavigate} />
       )}
       {currentPage === 'branch_cctv_management' && loggedInUserType === 'branch' && (
-        // BranchAdminCCTVManagement에 cctvData와 setCctvData를 prop으로 전달합니다.
         <BranchAdminCCTVManagement onLoginClick={handleLoginClick} onNavigate={handleDashboardNavigate} cctvList={cctvData} setCctvList={setCctvData} />
       )}
     </div>
